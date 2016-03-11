@@ -1,0 +1,39 @@
+﻿<phone:PhoneApplicationPage x:Class="XAPADStatisticsTest._480X600"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+                            xmlns:xapadStatistics="clr-namespace:XAPADStatistics;assembly=XAPADStatistics"
+                            FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                            FontSize="{StaticResource PhoneFontSizeNormal}"
+                            Foreground="{StaticResource PhoneForegroundBrush}"
+                            Orientation="Portrait"
+                            SupportedOrientations="Portrait"
+                            shell:SystemTray.IsVisible="True"
+                            mc:Ignorable="d">
+
+    <!--  LayoutRoot 是包含所有页面内容的根网格  -->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!--  ContentPanel - 在此处放置其他内容  -->
+
+        <Grid x:Name="ContentPanel"
+              Grid.Row="1"
+              Margin="12,0,12,0" />
+        <!--
+            <TextBlock HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Text="第一次进入该尺寸的页面广告不显示，而是在后台进行缓存，请等待几秒，第二次进入则会正常显示，防止网络缓慢情况."
+            TextWrapping="Wrap" />
+        -->
+        <xapadStatistics:AdItem ADKey="890cff0b11b599b2"
+                                AppID="10000626"
+                                Size="SizeW480H600" />
+    </Grid>
+
+</phone:PhoneApplicationPage>

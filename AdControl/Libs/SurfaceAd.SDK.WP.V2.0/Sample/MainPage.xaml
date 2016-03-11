@@ -1,0 +1,64 @@
+﻿<phone:PhoneApplicationPage xmlns:WP="clr-namespace:SurfaceAd.SDK.WP;assembly=SurfaceAd.SDK.WP" 
+    x:Class="Sample.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    shell:SystemTray.IsVisible="True">
+
+    <!--LayoutRoot 是包含所有页面内容的根网格-->
+    <Grid x:Name="LayoutRoot">
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                <GradientStop Color="White" Offset="1"/>
+                <GradientStop Color="Black"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1" Margin="12,0">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"></ColumnDefinition>
+                <ColumnDefinition Width="10"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0" Grid.RowSpan="2" Source="/Images/s.png"></Image>
+            <TextBlock Text="Surface Ad" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center"  Foreground="White" FontFamily="微软雅黑" FontSize="20"/>
+            <TextBlock Text="SDK嵌入应用示例" Grid.Column="2" Grid.Row="1"  VerticalAlignment="Center" Foreground="White" FontFamily="微软雅黑" FontSize="34"/>
+        </Grid>
+        <StackPanel Grid.Row="2" Margin="0,20">
+            <Button Name="btnBannerImage" Content="Banner图片" Click="btnBannerImage_Click"></Button>
+            <Button Name="btnBannerVideo" Content="Banner视频" Click="btnBannerVideo_Click"></Button>
+            <Button Name="btnScreenImage" Content="开屏图片（应用启动时）" Click="btnScreenImage_Click"></Button>
+            <Button Name="btnScreenVideo" Content="开屏视频（应用启动时）" Click="btnScreenVideo_Click"></Button>
+            <Button Name="btnInterstitialImage" Content="插屏图片" Click="btnInterstitialImage_Click"></Button>
+            <Button Name="btnInterstitialVideo" Content="插屏视频" Click="btnInterstitialVideo_Click"></Button>
+        </StackPanel>
+        <!--<WP:SurfaceAdInterstitialControl Name="surfaceAdScreenImage"                                         
+                                         AdToken="Yg84XTVRYwpiAzhaNUdjCmIR"
+                                         AdPosition="efb305f6524e39a26ffeb07d4323c6e7"
+                                         InterstitialAdShowTime="4"                                         
+                                         InterstitialAdType="FirstLanuche"/>-->
+        <WP:SurfaceAdInterstitialControl Name="surfaceAdScreenImage"          
+                                         AdRequestUrl="http://betas.surfacead.com/l.php"
+                                         AdToken="OVQ0UTZSZA05WDRWNkRkDTlK"
+                                         AdPosition="b228510d3a20a5635c0a81bc904199f1"
+                                         InterstitialAdShowTime="4"                                         
+                                         InterstitialAdType="FirstLanuche"/>
+    </Grid>
+
+</phone:PhoneApplicationPage>

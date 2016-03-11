@@ -1,0 +1,38 @@
+﻿<phone:PhoneApplicationPage xmlns:WP="clr-namespace:SurfaceAd.SDK.WP;assembly=SurfaceAd.SDK.WP" 
+    x:Class="Sample.Pages.InterstitialVideoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="PortraitOrLandscape" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+
+    <!--LayoutRoot 是包含所有页面内容的根网格-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <!--放在容器的最底层-->
+        <WP:SurfaceAdInterstitialControl Name="surfaceInterstitialAdVideoXaml" 
+                             AdPosition="95d90f6dd048fb6a07b32dd05773e4f4"
+                             AdToken="Yg84XTVRYwpiAzhaNUdjCmIR"
+                             IsShowCloseIcon="True"
+                             InterstitialAdType="Running"
+                             AdRefreshInterval="6"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="80"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition ></ColumnDefinition>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Content="InterstitialAd" Click="Button_Click"></Button>
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>

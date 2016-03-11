@@ -1,0 +1,34 @@
+﻿<phone:PhoneApplicationPage x:Class="XAPADStatisticsTest._310X160"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+                            xmlns:xapadStatistics="clr-namespace:XAPADStatistics;assembly=XAPADStatistics"
+                            FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                            FontSize="{StaticResource PhoneFontSizeNormal}"
+                            Foreground="{StaticResource PhoneForegroundBrush}"
+                            Orientation="Portrait"
+                            SupportedOrientations="Portrait"
+                            shell:SystemTray.IsVisible="True"
+                            mc:Ignorable="d">
+
+    <!--  LayoutRoot 是包含所有页面内容的根网格  -->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!--  ContentPanel - 在此处放置其他内容  -->
+        <Grid x:Name="ContentPanel"
+              Grid.Row="1"
+              Margin="12,0,12,0" />
+        <!--  310*160 是默认轮播的 所以得在页面离开时停止轮播 后台调用stop方法  -->
+        <xapadStatistics:AdItem x:Name="AdItem"
+                                ADKey="062192f0b7627982"
+                                AppID="10000626"
+                                Size="SizeW310H160" />
+    </Grid>
+
+</phone:PhoneApplicationPage>

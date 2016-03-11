@@ -1,0 +1,41 @@
+﻿<phone:PhoneApplicationPage x:Class="XAPADStatisticsTest._480X800"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:XapAdStatistics="clr-namespace:XAPADStatistics;assembly=XAPADStatistics"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+                            FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                            FontSize="{StaticResource PhoneFontSizeNormal}"
+                            Foreground="{StaticResource PhoneForegroundBrush}"
+                            Orientation="Portrait"
+                            SupportedOrientations="Portrait"
+                            shell:SystemTray.IsVisible="False"
+                            mc:Ignorable="d">
+
+    <!--  LayoutRoot 是包含所有页面内容的根网格  -->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!--  ContentPanel - 在此处放置其他内容  -->
+        <Grid x:Name="ContentPanel"
+              Grid.Row="1"
+              Margin="12,0,12,0">
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Text="第一次进入该尺寸的页面广告不显示，而是在后台进行缓存，请等待几秒，第二次进入则会正常显示，防止网络缓慢情况."
+                       TextWrapping="Wrap" />
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Text="该种放置方式 适用于没有appbar的 页面 否则放置到引导页显示"
+                       TextWrapping="Wrap" />
+        </Grid>
+        <XapAdStatistics:AdItem Grid.RowSpan="2"
+                                ADKey="b2da50f269ef71d2"
+                                AppID="10000626"
+                                Size="SizeW480H800" />
+    </Grid>
+</phone:PhoneApplicationPage>

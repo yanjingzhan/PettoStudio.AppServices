@@ -1,0 +1,40 @@
+﻿<phone:PhoneApplicationPage x:Class="XAPADStatisticsTest.AdCom390_480"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+                            xmlns:xapadStatistics="clr-namespace:XAPADStatistics;assembly=XAPADStatistics"
+                            FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                            FontSize="{StaticResource PhoneFontSizeNormal}"
+                            Foreground="{StaticResource PhoneForegroundBrush}"
+                            Orientation="Portrait"
+                            SupportedOrientations="Portrait"
+                            shell:SystemTray.IsVisible="True"
+                            mc:Ignorable="d">
+
+    <!--  LayoutRoot 是包含所有页面内容的根网格  -->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!--  ContentPanel - 在此处放置其他内容  -->
+        <Grid x:Name="ContentPanel"
+              Grid.Row="1"
+              Margin="12,0,12,0" />
+        <xapadStatistics:AdItem ADKey="d36beb4813815962"
+                                AppID="10000626"
+                                Size="SizeW480H80" />
+        <!--  popup要根据后台新的广告尺寸来设置  -->
+        <Popup x:Name="MyPopup"
+               Grid.RowSpan="2"
+               Width="390"
+               Height="550"
+               Margin="0 0 0 0"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center" />
+    </Grid>
+
+</phone:PhoneApplicationPage>

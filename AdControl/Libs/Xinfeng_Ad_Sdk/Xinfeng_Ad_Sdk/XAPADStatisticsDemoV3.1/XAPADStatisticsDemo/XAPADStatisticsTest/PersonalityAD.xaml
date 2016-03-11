@@ -1,0 +1,59 @@
+﻿<phone:PhoneApplicationPage x:Class="XAPADStatisticsTest.PersonalityAD"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+                            xmlns:xapadStatistics="clr-namespace:XAPADStatistics;assembly=XAPADStatistics"
+                            FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                            FontSize="{StaticResource PhoneFontSizeNormal}"
+                            Foreground="{StaticResource PhoneForegroundBrush}"
+                            Orientation="Portrait"
+                            SupportedOrientations="Portrait"
+                            shell:SystemTray.IsVisible="True"
+                            mc:Ignorable="d">
+    <!--  ContentPanel - 在此处放置其他内容  -->
+    <Grid x:Name="LayoutRoot" Background="Black">
+        <Grid Width="350"
+              Height="400"
+              Canvas.ZIndex="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <!--  ContentPanel - 在此处放置其他内容  -->
+            <Grid>
+                <TextBlock HorizontalAlignment="Center" FontSize="50">退出</TextBlock>
+                <TextBlock Margin="10,80,0,10" FontSize="30">推荐游戏</TextBlock>
+            </Grid>
+            <Grid x:Name="ContentPanel"
+                  Grid.Row="1"
+                  Margin="12,0,12,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="274" />
+                </Grid.ColumnDefinitions>
+                <xapadStatistics:AdItem x:Name="MyAdItem"
+                                        Grid.ColumnSpan="2"
+                                        ADKey="062192f0b7627982"
+                                        AppID="10000626"
+                                        Size="SizeW310H160" />
+            </Grid>
+            <Grid Grid.Row="2" Margin="0,5">
+                <Button x:Name="Instal"
+                        Margin="30,0"
+                        HorizontalAlignment="Left"
+                        Click="Instal_OnClick"
+                        Content="安装" />
+                <Button x:Name="Exit"
+                        Margin="30,0"
+                        HorizontalAlignment="Right"
+                        Click="Exit_Onclick"
+                        Content="退出" />
+            </Grid>
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>

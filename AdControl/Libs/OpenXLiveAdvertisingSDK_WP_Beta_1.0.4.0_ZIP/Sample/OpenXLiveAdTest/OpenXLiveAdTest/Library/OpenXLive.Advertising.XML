@@ -1,0 +1,496 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenXLive.Advertising</name>
+    </assembly>
+    <members>
+        <member name="T:OpenXLive.Advertising.AdErrorEventArgs">
+            <summary>
+            The AdErrorEventArgs class contains information about errors that occur when retrieving ads.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdErrorEventArgs.Code">
+            <summary>
+            Gets the error code.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdErrorEventArgs.Message">
+            <summary>
+            Gets the error message.
+            </summary>
+        </member>
+        <member name="T:OpenXLive.Advertising.AdType">
+            <summary>
+            Defines some types of ads.
+            </summary>
+        </member>
+        <member name="F:OpenXLive.Advertising.AdType.Banner">
+            <summary>
+            Banner.
+            </summary>
+        </member>
+        <member name="F:OpenXLive.Advertising.AdType.Interstitial">
+            <summary>
+            Interstitial.
+            </summary>
+        </member>
+        <member name="F:OpenXLive.Advertising.AdType.FullScreen">
+            <summary>
+            FullScreen.
+            </summary>
+        </member>
+        <member name="T:OpenXLive.Advertising.AdControl">
+            <summary>
+            The OpenXLive AdControl display advertising in an app.
+            </summary>
+        </member>
+        <member name="T:OpenXLive.Advertising.AdControlBase">
+            <summary>
+            Provides a basic class for ad control.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.#ctor">
+            <summary>
+            Initialize a new AdControlBase.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.#ctor(System.String,System.String,System.Boolean,OpenXLive.Advertising.AdType)">
+            <summary>
+            Initialize a new AdControlBase with the provided parameters.
+            </summary>
+            <param name="applicationId">The application ID of the app.</param>
+            <param name="adUnitId">The ad unit identifier for this AdControlBase instance.</param>
+            <param name="isAutoRefreshEnabled">Enables or disables the automatic refresh of ads.</param>
+            <param name="type">The type of ads.</param>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.Refresh">
+            <summary>
+            When automatic ad refresh is disabled, a call to this method directs the AdControlBase to show the next ad when a new ad becomes available.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.Resume">
+            <summary>
+            This method is used to resume the normal display of an ad after a call to Suspend.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.Suspend">
+            <summary>
+            Suspends the current ad. Replaces the current view of the ad with a static snapshot of what was being rendered.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.RaiseErrorOccurredEvent(System.Object,OpenXLive.Advertising.AdErrorEventArgs)">
+            <summary>
+            Raise ErrorOccurred event.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.RaiseAdRefreshed(System.Object)">
+            <summary>
+            Raise AdRefreshed event.
+            </summary>
+            <param name="sender"></param>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.RaiseIsEngagedChanged(System.Object)">
+            <summary>
+            Raise IsEngagedChanged event.
+            </summary>
+            <param name="sender"></param>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.RaiseAdCompleted(System.Object)">
+            <summary>
+            Raise AdCompleted event.
+            </summary>
+            <param name="sender"></param>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.OnIsBackgroundTransparentPropertyChanged">
+            <summary>
+            Invoke when IsBackgroundTransparent property changed.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.OnIsAutoRefreshEnabledPropertyChanged">
+            <summary>
+            Invoke when IsAutoRefreshEnabled property changed.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControlBase.OnTypePropertyChanged">
+            <summary>
+            Invoke when Type property changed.
+            </summary>
+        </member>
+        <member name="E:OpenXLive.Advertising.AdControlBase.ErrorOccurred">
+            <summary>
+            Error event that is raised when the <c>AdControlBase</c> encounters an error while retrieving ads.
+            </summary>
+        </member>
+        <member name="E:OpenXLive.Advertising.AdControlBase.AdRefreshed">
+            <summary>
+            Event that is raised when the <c>AdControlBase</c> receives a new ad.
+            </summary>
+        </member>
+        <member name="E:OpenXLive.Advertising.AdControlBase.IsEngagedChanged">
+            <summary>
+            Event that is raised when the user clicks on the ad and the action dialog is waiting for input from the user.
+            </summary>
+            <remarks>
+            This event is intended to give developers the option to pause the app when the action dialog appears.
+            </remarks>
+        </member>
+        <member name="E:OpenXLive.Advertising.AdControlBase.AdCompleted">
+            <summary>
+            Event that is raised when the <c>AdControlBase</c> load an ad completed.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControlBase.IsBackgroundTransparent">
+            <summary>
+            Gets or sets a value indicates whether the background is transparent.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControlBase.Type">
+            <summary>
+            Gets or sets the type of an ad.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControlBase.Latitude">
+            <summary>
+            The latitude of the user. The location is in the format of a latitude coordinate.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControlBase.Longitude">
+            <summary>
+            The longitude of the user. The location is in the format of a longitude coordinate.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControlBase.AdUnitId">
+            <summary>
+            <para>
+              Gets or sets the ad unit identifier for this <c>AdControlBase</c> instance.
+            </para>
+            <para>
+              This value is provided to the publisher when the publisher creates an <c>AdUnit</c> in pubCenter. See the Publisher Onboarding Guide for more information.
+            </para>
+            </summary>
+            <remarks>
+            <para>
+              This property can only be set when the <c>AdControlBase</c> is instantiated by using the default constructor.
+            </para>
+            <para>Once set, this property cannot be modified.</para>
+            </remarks>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControlBase.ApplicationId">
+            <summary>
+            The application ID of the app. This value is provided to you when you register the app with pubCenter.
+            </summary>
+            <remarks>
+            <para>Only one value for the application ID can be used within an app.</para>
+            <para>
+              If more than one value for the <c>ApplicationId</c> is used in different <c>AdControlBase</c> objects that are in the app, some controls will
+              not receive ads and will raise an <c>ErrorOccurred</c> event.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControlBase.IsAutoRefreshEnabled">
+            <summary>
+            Enables or disables the automatic refresh of ads. This property cannot be changed after the <c>AdControlBase</c> is added to a page.
+            </summary>
+            <remarks>
+            This property can only be set when the <c>AdControlBase</c> is instantiated by using the default constructor or in XAML.
+            Once set, this property cannot be modified later. This property is set to <c>true</c> by default.
+            </remarks>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControlBase.IsAutoCollapseEnabled">
+            <summary>
+            Enables or disables the automatic hiding of the <c>AdControlBase</c> if no ad is available or an error occurs.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControlBase.IsEmulator">
+            <summary>
+            Gets a value indicates whether the device is emulator.
+            </summary>
+        </member>
+        <member name="F:OpenXLive.Advertising.AdControl._isAnimation">
+            <summary>
+            Indicating whether is loading next ad.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.#ctor">
+            <summary>
+            Initializes a new instance of AdControl class.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.OnTap(System.Windows.Input.GestureEventArgs)">
+            <summary>
+            Called before OnMouseLeftButtonUp event occurs.
+            </summary>
+            <param name="e">The data for the event.</param>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.#ctor(System.String,System.String,System.Boolean,OpenXLive.Advertising.AdType)">
+            <summary>
+            Initialize a new AdControl with the provided parameters.
+            </summary>
+            <param name="applicationId">The application ID of the app.</param>
+            <param name="adUnitId">The ad unit identifier for this AdControl instance.</param>
+            <param name="isAutoRefreshEnabled">Enables or disables the automatic refresh of ads.</param>
+            <param name="type">The type of ads.</param>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.OnApplyTemplate">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.ReverseBrowserWithAnimation">
+            <summary>
+            
+            </summary>
+            <remarks>
+            Only banner ad support animation.
+            </remarks>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.RefreshAdAndDisplay(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="fromCache">Indicating whether get an ad from cache.</param>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.ClickAd">
+            <summary>
+            Click ad and navigate to specific windows phone store page.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.Refresh">
+            <summary>
+            When automatic ad refresh is disabled, a call to this method directs the AdControl to show the next ad when a new ad becomes available.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.Resume">
+            <summary>
+            This method is used to resume the normal display of an ad after a call to Suspend.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.Suspend">
+            <summary>
+            Suspends the current ad. Replaces the current view of the ad with a static snapshot of what was being rendered.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.OnTypePropertyChanged">
+            <summary>
+            Invoke when Type property changed.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdControl.OnIsAutoRefreshEnabledPropertyChanged">
+            <summary>
+            Invoke when IsAutoRefreshEnabled property changed.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControl.IsEngaged">
+            <summary>
+            Gets a value that indicates whether the user is currently interacting with one of the ads.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControl.IsSuspended">
+            <summary>
+            Gets the current suspended state of the AdControl.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControl.HasAd">
+            <summary>
+            Gets the current ad state.
+            </summary>
+            <remarks>
+            <para>
+            Returns a value of true if the AdControlBase has received an ad. This value is false if no ad is currently available.
+            </para>
+            <para>
+            Use the AdRefreshed and ErrorOccurred events to receive notifications about when the AdControl is refreshed or the ad cannot be shown due to an error.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdControl.AutoRefreshIntervalInSeconds">
+            <summary>
+            Use this API to set or retrieve the value of the auto-refresh interval. The value is in seconds.
+            </summary>
+        </member>
+        <member name="T:OpenXLive.Advertising.BackgroundBrushConverter">
+            <summary>
+            Converter for background brush.
+            IsBackgroundTransparent property determines whether the background is transparent.
+            If false, the default background is black.
+            </summary>
+        </member>
+        <member name="T:OpenXLive.Advertising.BooleanToVisibilityConverter">
+            <summary>
+            Converter from boolean value to System.Visibility.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdCacheItem.Uri">
+            <summary>
+            Original web address.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdCacheItem.ClickUri">
+            <summary>
+            Navigation uri when click an ad.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdCacheItem.LocalUri">
+            <summary>
+            Thr uri in the isolated storage.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdsCache.Save">
+            <summary>
+            Save info to the isolated storage.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdsCache.Load">
+            <summary>
+            Load info from the isolated storage.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdsCache.AdOffset">
+            <summary>
+            Gets or sets a value indicating the last displayed ad.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdsCache.Generation">
+            <summary>
+            Gets or sets a value indicating the cache generation.
+            </summary>
+        </member>
+        <member name="T:OpenXLive.Advertising.AdsCacheCallback">
+            <summary>
+            Represents a callback when get a ad.
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdsCompletedEventArgs.Result">
+            <summary>
+            Gets a value indicating whether the ad has been acquired successfully.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdsCompletedEventArgs.Content">
+            <summary>
+            Gets the advertising content.
+            </summary>
+        </member>
+        <member name="T:OpenXLive.Advertising.AdsCompletedEventHanlder">
+            <summary>
+            Represents the method that will handle an event when advertising loaded.
+            </summary>
+        </member>
+        <member name="F:OpenXLive.Advertising.AdsManager._source">
+            <summary>
+            Ads source.
+            </summary>
+        </member>
+        <member name="F:OpenXLive.Advertising.AdsManager._currentSourceIndex">
+            <summary>
+            Current index of ads source.
+            </summary>
+        </member>
+        <member name="F:OpenXLive.Advertising.AdsManager._currentCacheIndex">
+            <summary>
+            Current index of cache.
+            </summary>
+        </member>
+        <member name="F:OpenXLive.Advertising.AdsManager.Caches">
+            <summary>
+            Ads cache.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdsManager.GetAd(OpenXLive.Advertising.AdsCacheCallback,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="callback"></param>
+            <param name="fromCache">Whether get ad from cache.</param>
+        </member>
+        <member name="M:OpenXLive.Advertising.AdsManager.GetAdCore(OpenXLive.Advertising.Ad,OpenXLive.Advertising.AdsCacheCallback,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="ad"></param>
+            <param name="callback"></param>
+            <param name="isPreload">Indicating whether this method is used to load the preload ad.</param>
+        </member>
+        <member name="P:OpenXLive.Advertising.AdsManager.IsBusy">
+            <summary>
+            Gets a value indicating whether is downloading an preload ad.
+            </summary>
+        </member>
+        <member name="T:OpenXLive.Advertising.PropertyChangedEventArgs`1">
+            <summary>
+            Provides data for a property changed callback implementation.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:OpenXLive.Advertising.PropertyChangedEventHandler`1">
+            <summary>
+            Represents the method that will handle events raised when a property is changed.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:OpenXLive.Advertising.PropertyMonitor">
+            <summary>
+            Detect property changes.
+            </summary>
+        </member>
+        <member name="E:OpenXLive.Advertising.PropertyMonitor.VisibilityChanged">
+            <summary>
+            Occurs when Visibility property changed in the target FrameworkElement.
+            </summary>
+        </member>
+        <member name="E:OpenXLive.Advertising.PropertyMonitor.OpacityChanged">
+            <summary>
+            Occurs when Opacity property changed in the target FrameworkElement.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.PropertyMonitor.Opacity">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.PropertyMonitor.Visibility">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:OpenXLive.Advertising.Service.RestTransport">
+            <summary>
+            The transport channel use Http and RESTful service to access service.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.Service.XLiveTransport.Service">
+            <summary>
+            The Service instance of call the Transport object.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.Service.XLiveTransport.IsEncrypt">
+            <summary>
+            Gets or sets whether encrypt the Parameters.
+            </summary>
+        </member>
+        <member name="P:OpenXLive.Advertising.Service.XLiveTransport.IsSecureTransport">
+            <summary>
+            Gets or sets whether use Http SSL transport.True is via https, Flase is via http.
+            </summary>
+        </member>
+        <member name="M:OpenXLive.Advertising.Service.AesEncryption.EncryptAes(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="plainText"></param>
+            <param name="iv"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="P:OpenXLive.Advertising.Service.XLiveServiceManager.AdvertisingService">
+            <summary>
+            Gets the AdService instance.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,9 @@
+TestUrl
+GetAdInfo
+http://appservices.ad.pettostudio.net/adcontrol.aspx?action=getadinfo&appname=tiequan3&appid=x&appversion=1.0&token=xxx
+PostAdClickCount
+http://appservices.ad.pettostudio.net/adcontrol.aspx?action=postadclickcount&appname=tiequan3&appid=xx&appversion=1.0&adname=admob_banner&adtype=banner&clickcount=1&showcount=0&adindex=1&token=xx
+PostAdClickCount
+http://appservices.ad.pettostudio.net/adcontrol.aspx?action=postadshowcount&appname=tiequan3&appid=xx&appversion=1.0&adname=admob_banner&adtype=banner&clickcount=1&showcount=0&adindex=1&token=xx
+getrecommendapp
+http://appservices.ad.pettostudio.net/apprecommendapp.aspx?action=getrecommendapp&getterappname=tiequan3&recommendapplistid=emu_en&token=xx

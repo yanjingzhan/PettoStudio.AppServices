@@ -438,6 +438,29 @@ namespace Controller
             }
         }
 
+        public void DevSuccessedByDreamSparkAmazon(string id, string realDevAccount, string realDevPassword, string ip)
+        {
+            try
+            {
+                string sqlCmd1 = string.Format("UPDATE [dbo].[PushGameInfo] SET [State] = '{0}',[UpdateTime] = '{1}',[RealDevAccount] = '{2}',[RealDevPassword] = '{3}',[PushIP] = '{4}' WHERE [ID] = '{5}'",
+                                                "安卓待审核", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), realDevAccount, realDevPassword, ip, id);
+                SqlHelper.Instance.ExecuteCommand(sqlCmd1);
+
+                string sqlCmd2 = string.Format("SELECT [GameName] FROM [dbo].[PushGameInfo] WHERE [ID]={0}", id);
+                string gameName = SqlHelper.Instance.ExecuteScalar(sqlCmd2).ToString();
+
+                string sqlCmd3 = string.Format("UPDATE [dbo].[Edumail] SET [State] = '{0}',[UpdateTime] = '{1}',[PushCount] = [PushCount] + 1,[PushIP] = '{2}',[LastPushedGame] = '{3}' WHERE [DevAccount] = '{4}'",
+                                "amazon待审核", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), ip, gameName, realDevAccount);
+                SqlHelper.Instance.ExecuteCommand(sqlCmd3);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public List<PushGameInfoModel> GetNoGameDetailsGameList()
         {
             try

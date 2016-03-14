@@ -450,7 +450,7 @@ namespace Controller
                 string gameName = SqlHelper.Instance.ExecuteScalar(sqlCmd2).ToString();
 
                 string sqlCmd3 = string.Format("UPDATE [dbo].[Edumail] SET [State] = '{0}',[UpdateTime] = '{1}',[PushCount] = [PushCount] + 1,[PushIP] = '{2}',[LastPushedGame] = '{3}' WHERE [DevAccount] = '{4}'",
-                                "amazon待审核", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), ip, gameName, realDevAccount);
+                                "amazon已提交", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), ip, gameName, realDevAccount);
                 SqlHelper.Instance.ExecuteCommand(sqlCmd3);
 
             }
@@ -923,6 +923,23 @@ namespace Controller
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+
+        public void UpdateStateByFileNameAndState(string fileName, string oldState, string newState)
+        {
+            try
+            {
+                oldState = string.IsNullOrEmpty(oldState) ? "[State]" : "'" + oldState + "'";
+                string sqlCmd = string.Format("UPDATE [dbo].[PushGameInfo] SET [State]= '{0}' WHERE [FileName] = '{1}' AND [State] = {2}",
+                                                    newState, fileName, oldState);
+
+                SqlHelper.Instance.ExecuteCommand(sqlCmd);
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }

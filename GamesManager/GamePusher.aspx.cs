@@ -21,7 +21,7 @@ namespace GamesManager
                     googlebanner, googlechaping, pubcenterappid, pubcenteradid, addtime, updatetime, devaccount, devpassword, count,
                     password, role;
 
-                string id, gamedetails, logopath, backimagepath, sourcetype, filename,
+                string id, gamedetails, logopath, backimagepath, sourcetype, filename,oldstate,
                        newstate, jpstate, newjpstate, gameState, devPusher, account, adname, realdevaccount, realdevpassword;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
@@ -60,6 +60,7 @@ namespace GamesManager
                 adname = Request["adname"] == null ? "" : Request["adname"].Trim();
                 realdevaccount = Request["realdevaccount"] == null ? "" : Request["realdevaccount"].Trim();
                 realdevpassword = Request["realdevpassword"] == null ? "" : Request["realdevpassword"].Trim();
+                oldstate = Request["oldstate"] == null ? "" : Request["oldstate"].Trim();
 
                 switch (action.ToLower())
                 {
@@ -161,7 +162,17 @@ namespace GamesManager
                         InputInfoSuccessedByDreamSparkAmazon(id, realdevaccount, realdevpassword);
                         break;
 
+                    case "devsuccessedbydreamsparkamazon":
+                        DevSuccessedByDreamSparkAmazon(id, realdevaccount, realdevpassword);
+                        break;
+
+                    case "updatestatebyfilenameandstate":
+                        UpdateStateByFileNameAndState(filename, oldstate, newstate);
+                        break;
+
                     #endregion
+
+                    
 
                     default:
                         Response.Write("-100:action is error!");
@@ -172,6 +183,39 @@ namespace GamesManager
         }
 
         #region Amazon
+
+        private void UpdateStateByFileNameAndState(string fileName, string oldState, string newState)
+        {
+            try
+            {
+                new PushGameInfoControl().UpdateStateByFileNameAndState(fileName, oldState, newState);
+
+                Response.Write("200:ok");
+                LogWriter.WriteLog("200:ok", Page, "GamesManager");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GamesManager");
+            }
+        }
+
+
+        private void DevSuccessedByDreamSparkAmazon(string id, string realDevAccount, string realDevPassword)
+        {
+            try
+            {
+                new PushGameInfoControl().DevSuccessedByDreamSparkAmazon(id, realDevAccount, realDevPassword, Page.Request.ServerVariables["REMOTE_ADDR"].ToString());
+
+                Response.Write("200:ok");
+                LogWriter.WriteLog("200:ok", Page, "GamesManager");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GamesManager");
+            }
+        }
 
         private void GetOneGameInfoAndChangeStateRandomForDevAmazon(string state, string newstate)
         {

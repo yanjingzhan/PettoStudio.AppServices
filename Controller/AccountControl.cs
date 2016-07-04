@@ -198,22 +198,24 @@ namespace Controller
         {
             try
             {
+
+
                 string sqlCmd_t = string.Format("SELECT [ShouDongCountry] FROM [dbo].[ShouDongNumber]");
-                country = SqlHelper.Instance.ExecuteScalar(sqlCmd_t).ToString();
+                string country_t = SqlHelper.Instance.ExecuteScalar(sqlCmd_t).ToString();
 
                 string sqlCmd = string.Format("SELECT ShouDongCurrentNumber FROM [dbo].[ShouDongNumber]");
                 int currentGroupNumber = int.Parse(SqlHelper.Instance.ExecuteScalar(sqlCmd).ToString());
 
                 List<AccountInfo> AdInfoList = new List<AccountInfo>();
 
-                sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] !='die' AND [Country]='{1}' AND [ShouDongGroupDone]<{2} AND ([UserName]='{3}' OR [UserName]='{3}.d') ORDER BY [ID] DESC",
-                              accountCount.ToString(), country, currentGroupNumber, userName);
+                sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] ='binding' AND [Country]='{1}' AND [ShouDongGroupDone]<{2} AND ([UserName]='{3}' OR [UserName]='{3}.d') ORDER BY [ID] DESC",
+                              accountCount.ToString(), country_t, currentGroupNumber, userName);
 
-                //if (userName == "1")
-                //{
-                //    sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] !='die' AND [ShouDongGroupDone]<{2} AND ([UserName]='{3}' OR [UserName]='{3}.d')",
-                //              accountCount.ToString(), country, currentGroupNumber, userName);
-                //}
+                if (userName == "1")
+                {
+                    sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] !='die' AND [ShouDongGroupDone]<{2} AND ([UserName]='{3}' OR [UserName]='{3}.d') ORDER BY [ID] DESC",
+                              accountCount.ToString(), country, currentGroupNumber, userName);
+                }
 
                 DataTable accountInfoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
 
@@ -247,6 +249,181 @@ namespace Controller
                         string sql_t = string.Format("UPDATE [dbo].[Accounts] SET [ShouDongGroupDone]={0},[ShouDongTime]='{1}' WHERE [Account] = '{2}'",
                                                     currentGroupNumber, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), ai.Account);
                         SqlHelper.Instance.ExecuteScalar(sql_t);
+                    }
+
+                    new ShuaControl().AddShuaRecordToDataBase(country, AdInfoList.Count.ToString(), "0");
+                }
+
+
+
+                return AdInfoList;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
+                return null;
+            }
+        }
+
+        public List<AccountInfo> GetAccountInfoListForShuaJi(int accountCount)
+        {
+            try
+            {
+                List<AccountInfo> AdInfoList = new List<AccountInfo>();
+
+                string sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] !='die' AND [IsDevAccount] is NULL ORDER BY [ID] DESC",
+                              accountCount.ToString());
+
+                DataTable accountInfoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (accountInfoTable == null || accountInfoTable.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+                for (int i = 0; i < accountInfoTable.Rows.Count; i++)
+                {
+                    AccountInfo accountInfo_t = new AccountInfo
+                    {
+                        Account = accountInfoTable.Rows[i]["Account"].ToString(),
+                        Password = accountInfoTable.Rows[i]["Password"].ToString(),
+                        UserName = accountInfoTable.Rows[i]["UserName"].ToString(),
+                        Country = accountInfoTable.Rows[i]["Country"].ToString(),
+                        State = accountInfoTable.Rows[i]["State"].ToString(),
+                        PhoneType = accountInfoTable.Rows[i]["PhoneType"].ToString(),
+                        Group = accountInfoTable.Rows[i]["Group"].ToString(),
+                        UpdateTime = accountInfoTable.Rows[i]["UpdateTime"].ToString(),
+                        BindingTime = accountInfoTable.Rows[i]["BindingTime"].ToString()
+                    };
+
+                    AdInfoList.Add(accountInfo_t);
+                }
+
+                if (AdInfoList.Count > 0)
+                {
+                    foreach (var ai in AdInfoList)
+                    {
+                        string sql_t = string.Format("UPDATE [dbo].[Accounts] SET [IsDevAccount] = 0,[ShouDongTime]='{0}' WHERE [Account] = '{1}'",
+                                                    DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), ai.Account);
+                        SqlHelper.Instance.ExecuteScalar(sql_t);
+                    }
+                }
+
+                return AdInfoList;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
+                return null;
+            }
+        }
+
+        public List<AccountInfo> GetAccountListByStateAndRefreshState(int count, string state, string newState)
+        {
+            try
+            {
+                List<AccountInfo> AdInfoList = new List<AccountInfo>();
+
+                string sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] ='{1}' ORDER BY [ID] DESC",
+                                                 count.ToString(), state);
+
+                DataTable accountInfoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (accountInfoTable == null || accountInfoTable.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+                for (int i = 0; i < accountInfoTable.Rows.Count; i++)
+                {
+                    AccountInfo accountInfo_t = new AccountInfo
+                    {
+                        Account = accountInfoTable.Rows[i]["Account"].ToString(),
+                        Password = accountInfoTable.Rows[i]["Password"].ToString(),
+                        UserName = accountInfoTable.Rows[i]["UserName"].ToString(),
+                        Country = accountInfoTable.Rows[i]["Country"].ToString(),
+                        State = accountInfoTable.Rows[i]["State"].ToString(),
+                        PhoneType = accountInfoTable.Rows[i]["PhoneType"].ToString(),
+                        Group = accountInfoTable.Rows[i]["Group"].ToString(),
+                        UpdateTime = accountInfoTable.Rows[i]["UpdateTime"].ToString(),
+                        BindingTime = accountInfoTable.Rows[i]["BindingTime"].ToString()
+                    };
+
+                    AdInfoList.Add(accountInfo_t);
+                }
+
+                if (AdInfoList.Count > 0)
+                {
+                    foreach (var ai in AdInfoList)
+                    {
+                        string sql_t = string.Format("UPDATE [dbo].[Accounts] SET [State]= '{0}' WHERE [Account] = '{1}'",
+                                                    newState, ai.Account);
+                        SqlHelper.Instance.ExecuteScalar(sql_t);
+                    }
+                }
+
+                return AdInfoList;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
+                return null;
+            }
+        }
+
+
+        public List<AccountInfo> GetAccountListByStateCountryAndRefreshState(int count, string country, string state, string newState)
+        {
+            try
+            {
+                List<AccountInfo> AdInfoList = new List<AccountInfo>();
+
+                string time_t = DateTime.Now.Subtract(TimeSpan.FromMinutes(10)).ToString("yyyy/MM/dd HH:mm:ss");
+                string sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] ='{1}' AND [Country] = '{2}' AND [AddTime] < '{3}' ORDER BY [ID] DESC",
+                    //"ORDER BY NEWID()",
+                                                 count.ToString(), state, country, time_t);
+
+                DataTable accountInfoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (accountInfoTable == null || accountInfoTable.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+                for (int i = 0; i < accountInfoTable.Rows.Count; i++)
+                {
+                    AccountInfo accountInfo_t = new AccountInfo
+                    {
+                        Account = accountInfoTable.Rows[i]["Account"].ToString(),
+                        Password = accountInfoTable.Rows[i]["Password"].ToString(),
+                        UserName = accountInfoTable.Rows[i]["UserName"].ToString(),
+                        Country = accountInfoTable.Rows[i]["Country"].ToString(),
+                        State = accountInfoTable.Rows[i]["State"].ToString(),
+                        PhoneType = accountInfoTable.Rows[i]["PhoneType"].ToString(),
+                        Group = accountInfoTable.Rows[i]["Group"].ToString(),
+                        UpdateTime = accountInfoTable.Rows[i]["UpdateTime"].ToString(),
+                        BindingTime = accountInfoTable.Rows[i]["BindingTime"].ToString()
+                    };
+
+                    AdInfoList.Add(accountInfo_t);
+                }
+
+                if (AdInfoList.Count > 0)
+                {
+                    foreach (var ai in AdInfoList)
+                    {
+                        string sql_t = string.Format("UPDATE [dbo].[Accounts] SET [State]= '{0}' WHERE [Account] = '{1}'",
+                                                    newState, ai.Account);
+                        SqlHelper.Instance.ExecuteScalar(sql_t);
+                    }
+
+                    if (state == "xboxed")
+                    {
+                        new ShuaControl().AddShuaRecordToDataBase(country + "_7", AdInfoList.Count.ToString(), "0");
+                    }
+                    else
+                    {
+                        new ShuaControl().AddShuaRecordToDataBase(country, AdInfoList.Count.ToString(), "0");
                     }
                 }
 

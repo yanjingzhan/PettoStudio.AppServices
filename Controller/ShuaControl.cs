@@ -23,7 +23,7 @@ namespace Controller
                 string sqlCmdAddRecord = string.Format("INSERT INTO [dbo].[ShuaRecord] ([Date],[ShuaSucCount],[ShuaFailCount],[Country],[UpdateTime]) VALUES ('{0}',{1},{2},'{3}','{4}')",
                                             DateTime.Now.Date.ToString("yyyy/MM/dd"), shuaSucCount, shuaFailCount, country, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                 var c = SqlHelper.Instance.ExecuteScalar(sqlCmdSelect);
-                if (c != null && c.ToString() != "0")
+                if (c != null &&  c.ToString() != "0")
                 {
                     sqlCmdAddRecord = string.Format("Update [dbo].[ShuaRecord] SET [ShuaSucCount]=[ShuaSucCount]+{0},[ShuaFailCount]=[ShuaFailCount]+{1},[UpdateTime]='{2}' WHERE [Date]='{3}'AND [Country]='{4}'",
                                             shuaSucCount, shuaFailCount, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.Date.ToString("yyyy/MM/dd"), country);

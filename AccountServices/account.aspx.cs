@@ -17,7 +17,7 @@ namespace AccountServices
         {
             if (!IsPostBack)
             {
-                string action, account, password, username, country, group, state, phonetype, accountcount, addTime;
+                string action, account, password, username, country, group, state, phonetype, accountcount, addTime, count, newstate;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 account = Request["account"] == null ? "" : Request["account"].Trim();
@@ -29,6 +29,9 @@ namespace AccountServices
                 phonetype = Request["phonetype"] == null ? "" : Request["phonetype"].Trim();
                 accountcount = Request["accountcount"] == null ? "" : Request["accountcount"].Trim();
                 addTime = Request["addtime"] == null ? "" : Request["addtime"].Trim();
+                count = Request["count"] == null ? "" : Request["count"].Trim();
+                newstate = Request["newstate"] == null ? "" : Request["newstate"].Trim();
+
 
                 switch (action.ToLower())
                 {
@@ -85,6 +88,18 @@ namespace AccountServices
                         CheckAccount(accountcount);
                         break;
 
+                    case "getaccountlistbystateandrefreshstate":
+                        GetAccountListByStateAndRefreshState(count, state, newstate);
+                        break;
+
+                    case "getaccountlistbystatecountryandrefreshstate":
+                        GetAccountListByStateCountryAndRefreshState(count, country, state, newstate);
+                        break;
+
+                    case "getaccountinfolistforshuaji":
+                        GetAccountInfoListForShuaJi(accountcount);
+                        break;
+
                     default:
                         Response.Write("-100:action is error!");
                         break;
@@ -92,6 +107,39 @@ namespace AccountServices
             }
         }
 
+        public void GetAccountListByStateCountryAndRefreshState(string count, string country, string state, string newState)
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(
+                    new AccountControl().GetAccountListByStateCountryAndRefreshState(int.Parse(count), country, state, newState));
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetAccountListByStateCountryAndRefreshState");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetAccountListByStateCountryAndRefreshState");
+            }
+        }
+
+        public void GetAccountListByStateAndRefreshState(string count, string state, string newState)
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(
+                    new AccountControl().GetAccountListByStateAndRefreshState(int.Parse(count), state, newState));
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetAccountListByStateAndRefreshState");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetAccountListByStateAndRefreshState");
+            }
+        }
         public void CheckAccount(string accountCount)
         {
             try
@@ -126,6 +174,22 @@ namespace AccountServices
             }
         }
 
+        public void GetAccountInfoListForShuaJi(string accountCount)
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(
+                    new AccountControl().GetAccountInfoListForShuaJi(int.Parse(accountCount)));
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetAccountInfoListForShuaJi");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetAccountInfoListForShuaJi");
+            }
+        }
         public void GetAccountInfoListByStateAndAddTime(string state, string accountCount, string addTime)
         {
             try

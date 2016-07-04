@@ -19,7 +19,7 @@ namespace GamesManager
             if (!IsPostBack)
             {
                 string action;
-                string name, guid, version, icon, size, level, url, newDownloadState,originalName,
+                string name, guid, version, icon, size, level, url, newDownloadState, originalName, state,
                     downloadType, actionType, ispc, iszhuanshu, gameProfileInfo, fileName, oldFileName, newFileName,
                     gameClassify, gameProfileUrl, gameSourceType, id, downloadState, count, numSize;
 
@@ -49,25 +49,42 @@ namespace GamesManager
                 newFileName = Request["newfilename"] == null ? "" : Request["newfilename"].Trim();
                 guid = Request["guid"] == null ? "" : Request["guid"].Trim();
                 originalName = Request["originalname"] == null ? "" : Request["originalname"].Trim();
+                state = Request["state"] == null ? "" : Request["state"].Trim();
 
                 switch (action.ToLower())
                 {
                     case "getunitygameinfoentitylist":
                         GetUnityGameInfoEntityList(name, guid, version, icon, size, level, url,
                             downloadType, actionType, ispc, iszhuanshu, gameProfileInfo, gameClassify,
-                            gameProfileUrl, gameSourceType, id, downloadState, count);
+                            gameProfileUrl, gameSourceType, id, downloadState, fileName, count);
+                        break;
+
+                    case "getunitygameinfoentitylistbydownload":
+                        GetUnityGameInfoEntityListByDownload(downloadType, downloadState, count);
+                        break;
+
+                    case "getunitygameinfoentitylistbynullstate":
+                        GetUnityGameInfoEntityListByNullState(downloadType, count);
+                        break;
+
+                    case "getunitygameinfoentitylistbyfilename":
+                        GetUnityGameInfoEntityListByFileName(fileName);
                         break;
 
                     case "addunitygameinfoentity":
                         AddUnityGameInfoEntity(name, guid, version, icon, size, level, url,
                             downloadType, actionType, ispc, iszhuanshu, gameProfileInfo, gameClassify,
-                            gameProfileUrl, gameSourceType, downloadState);
+                            gameProfileUrl, gameSourceType, downloadState, fileName);
                         break;
 
                     case "updateunitygameinfoentity":
                         UpdateUnityGameInfoEntity(name, guid, version, icon, size, level, url,
                             downloadType, actionType, ispc, iszhuanshu, gameProfileInfo, gameClassify,
                             gameProfileUrl, gameSourceType, id, downloadState, numSize, fileName);
+                        break;
+
+                    case "updatestatebyid":
+                        UpdateStateById(id, state);
                         break;
 
                     case "deleteunitygameinfoentity":
@@ -99,6 +116,21 @@ namespace GamesManager
                         Response.Write("-100:action is error!");
                         break;
                 }
+            }
+        }
+        private void UpdateStateById(string id, string state)
+        {
+            try
+            {
+                new UnityGameControl().UpdateStateById(id, state);
+
+                Response.Write("200:ok");
+                LogWriter.WriteLog("200:ok", Page, "GamesManager");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GamesManager");
             }
         }
 
@@ -170,9 +202,46 @@ namespace GamesManager
             }
         }
 
+
+        public void GetUnityGameInfoEntityListByDownload(string downloadType, string downloadState, string count)
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(
+                        new UnityGameControl().GetUnityGameInfoEntityListByDownload(downloadType, downloadState, int.Parse(count)));
+
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GamesManager");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GamesManager");
+            }
+        }
+
+        public void GetUnityGameInfoEntityListByNullState(string downloadType, string count)
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(
+                        new UnityGameControl().GetUnityGameInfoEntityListByNullState(downloadType, int.Parse(count)));
+
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GamesManager");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GamesManager");
+            }
+        }
+
         private void GetUnityGameInfoEntityList(string name, string guid, string version, string icon,
             string size, string level, string url, string downloadType, string actionType, string ispc, string iszhuanshu,
-            string gameProfileInfo, string gameClassify, string gameProfileUrl, string gameSourceType, string id, string downloadState, string count)
+            string gameProfileInfo, string gameClassify, string gameProfileUrl, string gameSourceType, string id, string downloadState, string fileName, string count)
         {
             try
             {
@@ -196,7 +265,8 @@ namespace GamesManager
                             Name = name,
                             Size = size,
                             Url = url,
-                            Version = version
+                            Version = version,
+                            FileName = fileName
                         }, int.Parse(count)));
 
                 Response.Write(result);
@@ -226,9 +296,27 @@ namespace GamesManager
             }
         }
 
+        private void GetUnityGameInfoEntityListByFileName(string fileName)
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(
+                        new UnityGameControl().GetUnityGameInfoEntityListByFileName(fileName, 1));
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GamesManager");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GamesManager");
+            }
+        }
+
+
         private void AddUnityGameInfoEntity(string name, string guid, string version, string icon,
             string size, string level, string url, string downloadType, string actionType, string ispc, string iszhuanshu,
-            string gameProfileInfo, string gameClassify, string gameProfileUrl, string gameSourceType, string downloadState)
+            string gameProfileInfo, string gameClassify, string gameProfileUrl, string gameSourceType, string downloadState, string filename)
         {
             try
             {
@@ -250,7 +338,8 @@ namespace GamesManager
                     Name = name,
                     Size = size,
                     Url = url,
-                    Version = version
+                    Version = version,
+                    FileName = filename
                 });
 
                 Response.Write("200:ok");

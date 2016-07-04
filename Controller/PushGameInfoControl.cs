@@ -336,15 +336,33 @@ namespace Controller
         {
             try
             {
+                
+
+                string sqlCmd2 = string.Format("SELECT [GameName],[SourceType] FROM [dbo].[PushGameInfo] WHERE [ID]={0}", id);
+
+                DataTable pushGameInfoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd2);
+
+                if (pushGameInfoTable == null || pushGameInfoTable.Rows.Count == 0)
+                {
+                    throw new Exception("没有该游戏！");
+                }
+
+                string gameName = pushGameInfoTable.Rows[0]["GameName"].ToString();
+                string sourceType = pushGameInfoTable.Rows[0]["SourceType"].ToString();
+
+                string gameState = "待审核";
+                string state = "已激活";
+                if(sourceType.ToLower() == "unity")
+                {
+                    state = "unity可用";
+                    gameState = "unity待审核";
+                }
                 string sqlCmd1 = string.Format("UPDATE [dbo].[PushGameInfo] SET [State] = '{0}',[UpdateTime] = '{1}',[RealDevAccount] = '{2}',[RealDevPassword] = '{3}',[PushIP] = '{4}' WHERE [ID] = '{5}'",
-                                                "待审核", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), realDevAccount, realDevPassword, ip, id);
+                                                gameState, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), realDevAccount, realDevPassword, ip, id);
                 SqlHelper.Instance.ExecuteCommand(sqlCmd1);
-
-                string sqlCmd2 = string.Format("SELECT [GameName] FROM [dbo].[PushGameInfo] WHERE [ID]={0}", id);
-                string gameName = SqlHelper.Instance.ExecuteScalar(sqlCmd2).ToString();
-
+                
                 string sqlCmd3 = string.Format("UPDATE [dbo].[Edumail] SET [State] = '{0}',[UpdateTime] = '{1}',[PushCount] = [PushCount] + 1,[PushIP] = '{2}',[LastPushedGame] = '{3}' WHERE [DevAccount] = '{4}'",
-                                "已激活", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), ip, gameName, realDevAccount);
+                                state, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), ip, gameName, realDevAccount);
                 SqlHelper.Instance.ExecuteCommand(sqlCmd3);
 
             }
@@ -420,7 +438,7 @@ namespace Controller
             try
             {
                 string sqlCmd1 = string.Format("UPDATE [dbo].[PushGameInfo] SET [State] = '{0}',[UpdateTime] = '{1}',[RealDevAccount] = '{2}',[RealDevPassword] = '{3}',[PushIP] = '{4}' WHERE [ID] = '{5}'",
-                                                "安卓已填写", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), realDevAccount, realDevPassword, ip, id);
+                                                "安卓待申请", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), realDevAccount, realDevPassword, ip, id);
                 SqlHelper.Instance.ExecuteCommand(sqlCmd1);
 
                 string sqlCmd2 = string.Format("SELECT [GameName] FROM [dbo].[PushGameInfo] WHERE [ID]={0}", id);
@@ -527,12 +545,12 @@ namespace Controller
                     throw new Exception("该游戏版本已经提交过了!");
                 }
 
-                string sqlCmd = string.Format("INSERT INTO [dbo].[PushGameInfo] ([GameName],[Version],[State],[GameID],[PusherName],[SurfaceAccountID],[SurfaceAdID],[GoogleBanner],[GoogleChaping],[PubcenterAppID],[PubcenterAdID],[AddTime],[UpdateTime],[DevAccount],[DevPassword],[GameDetails],[LogoPath],[BackImagePath],[SourceType],[FileName]) " +
-                                              " VALUES ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}')",
+                string sqlCmd = string.Format("INSERT INTO [dbo].[PushGameInfo] ([GameName],[Version],[State],[GameID],[PusherName],[SurfaceAccountID],[SurfaceAdID],[GoogleBanner],[GoogleChaping],[PubcenterAppID],[PubcenterAdID],[AddTime],[UpdateTime],[DevAccount],[DevPassword],[GameDetails],[LogoPath],[BackImagePath],[SourceType],[FileName],[GameClassify]) " +
+                                              " VALUES ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}')",
                                               pushGameInfoModel.GameName, pushGameInfoModel.Version, pushGameInfoModel.State, pushGameInfoModel.GameID, pushGameInfoModel.PusherName,
                                               pushGameInfoModel.SurfaceAccountID, pushGameInfoModel.SurfaceAdID, pushGameInfoModel.GoogleBanner, pushGameInfoModel.GoogleChaping,
                                               pushGameInfoModel.PubcenterAppID, pushGameInfoModel.PubcenterAdID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                                              pushGameInfoModel.DevAccount, pushGameInfoModel.DevPassword, pushGameInfoModel.GameDetails, pushGameInfoModel.LogoPath, pushGameInfoModel.BackImagePath, pushGameInfoModel.SourceType, pushGameInfoModel.FileName);
+                                              pushGameInfoModel.DevAccount, pushGameInfoModel.DevPassword, pushGameInfoModel.GameDetails, pushGameInfoModel.LogoPath, pushGameInfoModel.BackImagePath, pushGameInfoModel.SourceType, pushGameInfoModel.FileName,pushGameInfoModel.GameClassify);
 
                 SqlHelper.Instance.ExecuteCommand(sqlCmd);
             }

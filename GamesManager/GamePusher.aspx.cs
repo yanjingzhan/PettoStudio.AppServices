@@ -21,8 +21,8 @@ namespace GamesManager
                     googlebanner, googlechaping, pubcenterappid, pubcenteradid, addtime, updatetime, devaccount, devpassword, count,
                     password, role;
 
-                string id, gamedetails, logopath, backimagepath, sourcetype, filename,oldstate,
-                       newstate, jpstate, newjpstate, gameState, devPusher, account, adname, realdevaccount, realdevpassword;
+                string id, gamedetails, logopath, backimagepath, sourcetype, filename, oldstate,
+                       newstate, jpstate, newjpstate, gameState, devPusher, account, adname, realdevaccount, realdevpassword, gameclassify;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 gamename = Request["gamename"] == null ? "" : Request["gamename"].Trim();
@@ -62,12 +62,14 @@ namespace GamesManager
                 realdevpassword = Request["realdevpassword"] == null ? "" : Request["realdevpassword"].Trim();
                 oldstate = Request["oldstate"] == null ? "" : Request["oldstate"].Trim();
 
+                gameclassify = Request["gameclassify"] == null ? "" : Request["gameclassify"].Trim();
+
                 switch (action.ToLower())
                 {
                     case "addpushgameinfo":
                         AddPushGameInfo(gamename, version, state, gameid, pushername, surfaceaccountid, surfaceadid,
                                 googlebanner, googlechaping, pubcenterappid, pubcenteradid, addtime, updatetime, devaccount, devpassword, gamedetails,
-                                logopath, backimagepath, sourcetype, filename);
+                                logopath, backimagepath, sourcetype, filename, gameclassify);
                         break;
 
                     case "getpushgameinfomodellistbycount":
@@ -172,7 +174,7 @@ namespace GamesManager
 
                     #endregion
 
-                    
+
 
                     default:
                         Response.Write("-100:action is error!");
@@ -574,7 +576,7 @@ namespace GamesManager
                                                     string pushername, string surfaceaccountid, string surfaceadid,
                                                     string googlebanner, string googlechaping, string pubcenterappid,
                                                     string pubcenteradid, string addtime, string updatetime, string devaccount,
-                                                    string devpassword, string gameDetails, string logoPath, string backImagePath, string sourceType, string filename)
+                                                    string devpassword, string gameDetails, string logoPath, string backImagePath, string sourceType, string filename, string gameClassify)
         {
             try
             {
@@ -599,7 +601,8 @@ namespace GamesManager
                     GameDetails = gameDetails,
                     LogoPath = logoPath,
                     SourceType = sourceType,
-                    FileName = filename
+                    FileName = filename,
+                    GameClassify = gameClassify
                 };
 
                 new PushGameInfoControl().AddPushGameInfo(pushGameInfoModel);

@@ -132,7 +132,8 @@ namespace Controller
                     }
 
                     string sqlCmdGetCurrentGroupNumber = string.Format("SELECT [CurrentGroupNumber] FROM [dbo].[CountryGroup] WHERE [Country]='{0}' ", country);
-                    int currentGroupNumber = int.Parse(SqlHelper.Instance.ExecuteScalar(sqlCmdGetCurrentGroupNumber).ToString());
+                    object t = SqlHelper.Instance.ExecuteScalar(sqlCmdGetCurrentGroupNumber);
+                    int currentGroupNumber = t == null ? 0 : int.Parse(SqlHelper.Instance.ExecuteScalar(sqlCmdGetCurrentGroupNumber).ToString());
 
 
                     string sqlCmdInsert = string.Format("INSERT INTO [dbo].[Apps] ([Country],[AppId],[AppName],[MyGroupNumber],[AddTime],[PlayTime],[PlayAccountCount],[CouldBePlayed],[Owner],[ShouDongGroupNumber]) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','true','{7}','{8}')",
@@ -234,7 +235,7 @@ namespace Controller
             {
                 int currentShouDongGrupoNumber = GetShouDongCurrentGroupNumber();
 
-                country = GetShouDongCurrentCountry();
+                //country = GetShouDongCurrentCountry();
 
                 string sqlCmd = string.Format("SELECT * FROM [dbo].[Apps] WHERE [Country]='{0}' AND [CouldBePlayed]='1' AND [ShouDongGroupNumber]={1} ",
                                                 country, currentShouDongGrupoNumber);

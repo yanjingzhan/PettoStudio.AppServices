@@ -32,19 +32,172 @@ namespace Controller
                 string ID = string.IsNullOrEmpty(gameInfoEntity.ID) ? "[ID]" : "'" + gameInfoEntity.ID + "'";
                 string DownloadState = string.IsNullOrEmpty(gameInfoEntity.DownloadState) ? "[DownloadState]" : "'" + gameInfoEntity.DownloadState + "'";
                 string OriginalName = string.IsNullOrEmpty(gameInfoEntity.OriginalName) ? "[OriginalName]" : "'" + gameInfoEntity.OriginalName + "'";
+                string FileName = string.IsNullOrEmpty(gameInfoEntity.FileName) ? "[FileName]" : "'" + gameInfoEntity.FileName + "'";
 
                 string sqlCmd = string.Format("SELECT {0} * FROM [dbo].[AYYGames] WHERE " +
                                           "[ID] = {1} AND [Name] = {2} AND [Guid] = {3} AND [Icon] = {4} AND [Size] = {5} " +
                                           "AND [Level] = {6} AND [Url] = {7} AND [DownloadType] = {8} AND [ActionType] = {9} " +
                                           "AND [Ispc] = {10} AND [Iszhuanshu] = {11} AND [GameProfileInfo] = {12} AND [GameClassify] = {13} " +
-                                          "AND [GameProfileUrl] = {14} AND [GameSourceType] = {15} AND [DownloadState] = {16} AND [Version] = {17} AND [OriginalName] = {18}",
+                                          "AND [GameProfileUrl] = {14} AND [GameSourceType] = {15} AND [DownloadState] = {16} AND [Version] = {17} AND [OriginalName] = {18} AND [FileName] = {19}",
                                           count == 0 ? "" : "TOP " + count.ToString(),
                                           ID, name, guid, Icon, Size,
                                           Level, Url, DownloadType, ActionType,
                                           Ispc, Iszhuanshu, GameProfileInfo, GameClassify,
-                                          GameProfileUrl, GameSourceType, DownloadState, Version, OriginalName);
+                                          GameProfileUrl, GameSourceType, DownloadState, Version, OriginalName, FileName);
 
 
+                DataTable gameInfoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (gameInfoTable == null || gameInfoTable.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+                List<GameInfoEntity> result = new List<GameInfoEntity>();
+                for (int i = 0; i < gameInfoTable.Rows.Count; i++)
+                {
+                    GameInfoEntity gameInfoEntity_t = new GameInfoEntity
+                    {
+                        ActionType = gameInfoTable.Rows[i]["ActionType"].ToString(),
+                        DownloadState = gameInfoTable.Rows[i]["DownloadState"].ToString(),
+                        DownloadType = gameInfoTable.Rows[i]["DownloadType"].ToString(),
+                        GameClassify = gameInfoTable.Rows[i]["GameClassify"].ToString(),
+                        GameProfileInfo = gameInfoTable.Rows[i]["GameProfileInfo"].ToString(),
+                        GameProfileUrl = gameInfoTable.Rows[i]["GameProfileUrl"].ToString(),
+                        GameSourceType = gameInfoTable.Rows[i]["GameSourceType"].ToString(),
+                        Guid = gameInfoTable.Rows[i]["Guid"].ToString(),
+                        Icon = gameInfoTable.Rows[i]["Icon"].ToString(),
+                        ID = gameInfoTable.Rows[i]["ID"].ToString(),
+                        Ispc = gameInfoTable.Rows[i]["Ispc"].ToString(),
+                        Iszhuanshu = gameInfoTable.Rows[i]["Iszhuanshu"].ToString(),
+                        Level = gameInfoTable.Rows[i]["Level"].ToString(),
+                        Name = gameInfoTable.Rows[i]["Name"].ToString(),
+                        Size = gameInfoTable.Rows[i]["Size"].ToString(),
+                        Url = gameInfoTable.Rows[i]["Url"].ToString(),
+                        Version = gameInfoTable.Rows[i]["Version"].ToString(),
+                        NumSize = string.IsNullOrEmpty(gameInfoTable.Rows[0]["NumSize"].ToString()) ? -1.0f : float.Parse(gameInfoTable.Rows[0]["NumSize"].ToString()),
+                        FileName = gameInfoTable.Rows[i]["FileName"].ToString(),
+                        OriginalName = gameInfoTable.Rows[i]["OriginalName"].ToString(),
+                    };
+
+                    result.Add(gameInfoEntity_t);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
+        public List<GameInfoEntity> GetUnityGameInfoEntityListByDownload(string downloadType, string downloadState, int count)
+        {
+            try
+            {
+                string sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[AYYGames] WHERE [DownloadType] = '{1}' AND [DownloadState] = '{2}'", count, downloadType, downloadState);
+                DataTable gameInfoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (gameInfoTable == null || gameInfoTable.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+                List<GameInfoEntity> result = new List<GameInfoEntity>();
+                for (int i = 0; i < gameInfoTable.Rows.Count; i++)
+                {
+                    GameInfoEntity gameInfoEntity_t = new GameInfoEntity
+                    {
+                        ActionType = gameInfoTable.Rows[i]["ActionType"].ToString(),
+                        DownloadState = gameInfoTable.Rows[i]["DownloadState"].ToString(),
+                        DownloadType = gameInfoTable.Rows[i]["DownloadType"].ToString(),
+                        GameClassify = gameInfoTable.Rows[i]["GameClassify"].ToString(),
+                        GameProfileInfo = gameInfoTable.Rows[i]["GameProfileInfo"].ToString(),
+                        GameProfileUrl = gameInfoTable.Rows[i]["GameProfileUrl"].ToString(),
+                        GameSourceType = gameInfoTable.Rows[i]["GameSourceType"].ToString(),
+                        Guid = gameInfoTable.Rows[i]["Guid"].ToString(),
+                        Icon = gameInfoTable.Rows[i]["Icon"].ToString(),
+                        ID = gameInfoTable.Rows[i]["ID"].ToString(),
+                        Ispc = gameInfoTable.Rows[i]["Ispc"].ToString(),
+                        Iszhuanshu = gameInfoTable.Rows[i]["Iszhuanshu"].ToString(),
+                        Level = gameInfoTable.Rows[i]["Level"].ToString(),
+                        Name = gameInfoTable.Rows[i]["Name"].ToString(),
+                        Size = gameInfoTable.Rows[i]["Size"].ToString(),
+                        Url = gameInfoTable.Rows[i]["Url"].ToString(),
+                        Version = gameInfoTable.Rows[i]["Version"].ToString(),
+                        NumSize = string.IsNullOrEmpty(gameInfoTable.Rows[0]["NumSize"].ToString()) ? -1.0f : float.Parse(gameInfoTable.Rows[0]["NumSize"].ToString()),
+                        FileName = gameInfoTable.Rows[i]["FileName"].ToString(),
+                        OriginalName = gameInfoTable.Rows[i]["OriginalName"].ToString(),
+                    };
+
+                    result.Add(gameInfoEntity_t);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public List<GameInfoEntity> GetUnityGameInfoEntityListByFileName(string fileName, int count)
+        {
+            try
+            {
+                string sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[AYYGames] WHERE [FileName] = '{1}' ", count, fileName);
+                DataTable gameInfoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (gameInfoTable == null || gameInfoTable.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+                List<GameInfoEntity> result = new List<GameInfoEntity>();
+                for (int i = 0; i < gameInfoTable.Rows.Count; i++)
+                {
+                    GameInfoEntity gameInfoEntity_t = new GameInfoEntity
+                    {
+                        ActionType = gameInfoTable.Rows[i]["ActionType"].ToString(),
+                        DownloadState = gameInfoTable.Rows[i]["DownloadState"].ToString(),
+                        DownloadType = gameInfoTable.Rows[i]["DownloadType"].ToString(),
+                        GameClassify = gameInfoTable.Rows[i]["GameClassify"].ToString(),
+                        GameProfileInfo = gameInfoTable.Rows[i]["GameProfileInfo"].ToString(),
+                        GameProfileUrl = gameInfoTable.Rows[i]["GameProfileUrl"].ToString(),
+                        GameSourceType = gameInfoTable.Rows[i]["GameSourceType"].ToString(),
+                        Guid = gameInfoTable.Rows[i]["Guid"].ToString(),
+                        Icon = gameInfoTable.Rows[i]["Icon"].ToString(),
+                        ID = gameInfoTable.Rows[i]["ID"].ToString(),
+                        Ispc = gameInfoTable.Rows[i]["Ispc"].ToString(),
+                        Iszhuanshu = gameInfoTable.Rows[i]["Iszhuanshu"].ToString(),
+                        Level = gameInfoTable.Rows[i]["Level"].ToString(),
+                        Name = gameInfoTable.Rows[i]["Name"].ToString(),
+                        Size = gameInfoTable.Rows[i]["Size"].ToString(),
+                        Url = gameInfoTable.Rows[i]["Url"].ToString(),
+                        Version = gameInfoTable.Rows[i]["Version"].ToString(),
+                        NumSize = string.IsNullOrEmpty(gameInfoTable.Rows[0]["NumSize"].ToString()) ? -1.0f : float.Parse(gameInfoTable.Rows[0]["NumSize"].ToString()),
+                        FileName = gameInfoTable.Rows[i]["FileName"].ToString(),
+                        OriginalName = gameInfoTable.Rows[i]["OriginalName"].ToString(),
+                    };
+
+                    result.Add(gameInfoEntity_t);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+ 
+
+        public List<GameInfoEntity> GetUnityGameInfoEntityListByNullState(string downloadType, int count)
+        {
+            try
+            {
+                string sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[AYYGames] WHERE [DownloadType] = '{1}' AND [State] is NULL", count, downloadType);
                 DataTable gameInfoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
 
                 if (gameInfoTable == null || gameInfoTable.Rows.Count == 0)
@@ -138,12 +291,13 @@ namespace Controller
                 //    sizeM = float.Parse(gameInfoEntity.Size.Replace("m", "").Replace("M", "").Replace("b", "").Replace("B", ""));
                 //}
 
-                string sqlCmd = string.Format("INSERT INTO [dbo].[AYYGames] ([Name],[Guid],[Icon],[Size],[Level],[Url],[DownloadType],[ActionType],[Ispc],[Iszhuanshu],[GameProfileInfo],[GameClassify],[GameProfileUrl],[GameSourceType],[DownloadState],[AddTime],[UpdateTime],[Version],[NumSize]) " +
-                                              " VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}')",
+                string sqlCmd = string.Format("INSERT INTO [dbo].[AYYGames] ([Name],[Guid],[Icon],[Size],[Level],[Url],[DownloadType],[ActionType],[Ispc],[Iszhuanshu],[GameProfileInfo],[GameClassify],[GameProfileUrl],[GameSourceType],[DownloadState],[AddTime],[UpdateTime],[Version],[NumSize],[FileName]) " +
+                                              " VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}')",
                                               gameInfoEntity.Name, gameInfoEntity.Guid, gameInfoEntity.Icon, gameInfoEntity.Size, gameInfoEntity.Level,
                                               gameInfoEntity.Url, gameInfoEntity.DownloadType, gameInfoEntity.ActionType, gameInfoEntity.Ispc,
-                                              gameInfoEntity.Iszhuanshu, gameInfoEntity.GameProfileInfo, gameInfoEntity.GameClassify, gameInfoEntity.GameProfileUrl, gameInfoEntity.GameSourceType, gameInfoEntity.DownloadState, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                                              gameInfoEntity.Version, gameInfoEntity.NumSize);
+                                              gameInfoEntity.Iszhuanshu, gameInfoEntity.GameProfileInfo, gameInfoEntity.GameClassify, gameInfoEntity.GameProfileUrl,
+                                              gameInfoEntity.GameSourceType, gameInfoEntity.DownloadState, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                                              gameInfoEntity.Version, gameInfoEntity.NumSize, gameInfoEntity.FileName);
 
                 SqlHelper.Instance.ExecuteCommand(sqlCmd);
             }
@@ -268,6 +422,22 @@ namespace Controller
             }
         }
 
+
+        public void UpdateStateById(string id, string state)
+        {
+            try
+            {
+                string sqlCmd = string.Format("UPDATE [dbo].[AYYGames] SET [State] = '{0}',[UpdateTime] = '{1}' WHERE [ID] = '{2}'",
+                                state, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), id);
+
+                SqlHelper.Instance.ExecuteCommand(sqlCmd);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
 
         public void DeleteUnityGameInfoEntity(string id)

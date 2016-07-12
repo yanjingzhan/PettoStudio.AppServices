@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevAccountsManager", "DevAc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidGameInfoMigrater", "AndroidGameInfoMigrater\AndroidGameInfoMigrater.csproj", "{737586D6-9218-4938-A568-E9A4F218BDA6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecommendGamesServices", "RecommendGamesServices\RecommendGamesServices.csproj", "{C993B19D-1FA6-4F18-82FA-3E8873C62513}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,6 +169,14 @@ Global
 		{737586D6-9218-4938-A568-E9A4F218BDA6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{737586D6-9218-4938-A568-E9A4F218BDA6}.Release|ARM.ActiveCfg = Release|Any CPU
 		{737586D6-9218-4938-A568-E9A4F218BDA6}.Release|x86.ActiveCfg = Release|Any CPU
+		{C993B19D-1FA6-4F18-82FA-3E8873C62513}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C993B19D-1FA6-4F18-82FA-3E8873C62513}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C993B19D-1FA6-4F18-82FA-3E8873C62513}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{C993B19D-1FA6-4F18-82FA-3E8873C62513}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C993B19D-1FA6-4F18-82FA-3E8873C62513}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C993B19D-1FA6-4F18-82FA-3E8873C62513}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C993B19D-1FA6-4F18-82FA-3E8873C62513}.Release|ARM.ActiveCfg = Release|Any CPU
+		{C993B19D-1FA6-4F18-82FA-3E8873C62513}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

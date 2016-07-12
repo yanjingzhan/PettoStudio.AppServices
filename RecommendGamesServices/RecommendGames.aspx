@@ -1,0 +1,1 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="RecommendGames.aspx.cs" Inherits="RecommendGamesServices.RecommendGames" %>

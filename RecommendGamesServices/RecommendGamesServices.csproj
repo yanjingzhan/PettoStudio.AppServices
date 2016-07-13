@@ -66,12 +66,20 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="RecommendGames.aspx" />
     <Content Include="UploadManager.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LogWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecommendGames.aspx.cs">
+      <DependentUpon>RecommendGames.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RecommendGames.aspx.designer.cs">
+      <DependentUpon>RecommendGames.aspx</DependentUpon>
+    </Compile>
     <Compile Include="UploadManager.aspx.cs">
       <DependentUpon>UploadManager.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

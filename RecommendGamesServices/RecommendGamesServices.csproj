@@ -56,6 +56,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ClassDiagram1.cd" />
     <None Include="Properties\PublishProfiles\Web.config.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -67,18 +68,10 @@
   <ItemGroup>
     <Content Include="UploadManager.aspx" />
     <Content Include="Web.config" />
-    <Content Include="RecommendGames.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LogWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecommendGames.aspx.cs">
-      <DependentUpon>RecommendGames.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="RecommendGames.aspx.designer.cs">
-      <DependentUpon>RecommendGames.aspx</DependentUpon>
-    </Compile>
     <Compile Include="UploadManager.aspx.cs">
       <DependentUpon>UploadManager.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

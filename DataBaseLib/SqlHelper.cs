@@ -14,6 +14,11 @@ namespace DataBaseLib
         private static object _locker = new object();
 
         private string _connectionString;
+
+        public string ConnectionString
+        {
+            get { return _connectionString; }
+        }
         public static SqlHelper Instance
         {
             get

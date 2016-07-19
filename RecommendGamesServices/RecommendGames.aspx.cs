@@ -1,4 +1,5 @@
 ﻿using Controller;
+using Models.RecommendGames;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,9 @@ namespace RecommendGamesServices
                 string id, titlepic, title, newsform, newstime, onclick, classname, filename, classid, ishearder, newstext, befrom, isbottom;
 
                 string getcount, pagenumber;
+                string gameListJson;
 
+                string timeAuth, cryptStr;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 gametype = Request["gametype"] == null ? "" : Request["gametype"].Trim();
@@ -70,6 +73,16 @@ namespace RecommendGamesServices
                 getcount = Request["getcount"] == null ? "" : Request["getcount"].Trim();
                 pagenumber = Request["pagenumber"] == null ? "" : Request["pagenumber"].Trim();
 
+                gameListJson = Request["gamelistjson"] == null ? "" : Request["gamelistjson"].Trim();
+
+                timeAuth = Request["rd"] == null ? "" : Request["rd"].Trim();
+                cryptStr = Request["auth"] == null ? "" : Request["auth"].Trim();
+
+                if(!IsAuthSuccess(action,timeAuth,cryptStr))
+                {
+                    Response.Write("Server ERROR!");
+                    return;
+                }
 
                 switch (action.ToLower())
                 {
@@ -118,6 +131,10 @@ namespace RecommendGamesServices
 
                     case "addnewsclickcountbyid":
                         AddNewsClickCountById(id);
+                        break;
+
+                    case "updateorderforgame":
+                        UpdateOrderForGame(gameListJson);
                         break;
 
                     default:
@@ -180,7 +197,7 @@ namespace RecommendGamesServices
             {
                 string result = JsonHelper.SerializerToJson(new RecommendGamesControl().GetGameList(int.Parse(getCount), int.Parse(pageNumber)));
 
-                Response.Write(result);
+                Response.Write(Encryption.Encrypt(result));
                 LogWriter.WriteLog(result, Page, "GetGameList");
             }
             catch (Exception ex)
@@ -196,7 +213,7 @@ namespace RecommendGamesServices
             {
                 string result = JsonHelper.SerializerToJson(new RecommendGamesControl().GetHeaderGameList(int.Parse(getCount)));
 
-                Response.Write(result);
+                Response.Write(Encryption.Encrypt(result));
                 LogWriter.WriteLog(result, Page, "GetHeaderGameList");
             }
             catch (Exception ex)
@@ -307,7 +324,7 @@ namespace RecommendGamesServices
             {
                 string result = JsonHelper.SerializerToJson(new RecommendGamesControl().GetNewsInfoForJsonList(int.Parse(getCount), int.Parse(pageNumber), newsForm));
 
-                Response.Write(result);
+                Response.Write(Encryption.Encrypt(result));
                 LogWriter.WriteLog(result, Page, "GetNewsInfoForJsonList");
             }
             catch (Exception ex)
@@ -322,7 +339,7 @@ namespace RecommendGamesServices
         {
             try
             {
-                new RecommendGamesControl().AddNews(new Models.RecommendGames.NewsInfoForJson
+                new RecommendGamesControl().UpdateNewsById(new Models.RecommendGames.NewsInfoForJson
                 {
                     befrom = HttpUtility.UrlEncode(befrom),
                     Classid = classid,
@@ -363,6 +380,31 @@ namespace RecommendGamesServices
                 Response.Write(ex.Message);
                 LogWriter.WriteLog(ex.Message, Page, "AddNewsClickCountById");
             }
+        }
+
+        public void UpdateOrderForGame(string gameListJson)
+        {
+            try
+            {
+                List<GameModel> gameList = JsonHelper.DeserializeObjectFromJson<List<GameModel>>(gameListJson);
+
+                new RecommendGamesControl().UpdateOrderForGame(gameList);
+
+                Response.Write("200:ok");
+                LogWriter.WriteLog("200:ok", Page, "UpdateOrderForGame");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "UpdateOrderForGame");
+            }
+        }
+
+        private bool IsAuthSuccess(string action, string timeAuth, string crpyStr)
+        {
+            //LogWriter.WriteLog(action + "," + timeAuth + "," + HttpUtility.UrlDecode(Encryption.Encrypt(action + timeAuth)) + "," + crpyStr,
+            //    Page, "IsAuthSuccess");
+            return  HttpUtility.UrlDecode(Encryption.Encrypt(action + timeAuth)) == crpyStr;
         }
     }
 }

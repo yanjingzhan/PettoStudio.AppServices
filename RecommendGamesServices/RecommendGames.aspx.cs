@@ -142,7 +142,7 @@ namespace RecommendGamesServices
                         FileSize = filesize,
                         GameDetails = HttpUtility.UrlEncode(gamedetails),
                         GameID = gameid,
-                        GameName = gamename,
+                        GameName = HttpUtility.UrlEncode(gamename),
                         GameType = HttpUtility.UrlEncode(gametype),
                         HeadImage = HttpUtility.UrlEncode(headimage),
                         Images1 = HttpUtility.UrlEncode(images1),

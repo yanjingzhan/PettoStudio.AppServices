@@ -7,6 +7,7 @@ using Utility;
 using DataBaseLib;
 using System.IO;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace Controller
 {
@@ -16,7 +17,7 @@ namespace Controller
         {
             try
             {
-                string sqlCmd_Get = string.Format("SELECT COUNT(*) FROM [dbo].[RecommendGames] WHERE [GameID] = '{0}' AND [SourceType] = '{1}'", gameModel.GameID,gameModel.SourceType);
+                string sqlCmd_Get = string.Format("SELECT COUNT(*) FROM [dbo].[RecommendGames] WHERE [GameID] = '{0}' AND [SourceType] = '{1}'", gameModel.GameID, gameModel.SourceType);
 
                 int count = int.Parse(SqlHelper.Instance.ExecuteScalar(sqlCmd_Get).ToString());
 
@@ -25,11 +26,21 @@ namespace Controller
                     throw new Exception("该游戏已经存在于库中!");
                 }
 
-                string sqlCmd = string.Format("INSERT INTO [dbo].[RecommendGames] ([GameType],[GameName],[Version],[GameID],[PusherName],[UpdateTime],[GameDetails],[LogoPath],[SourceType],[DownloadCount],[Price],[FileSize],[Starts],[HeadImage],[Rating],[Images1],[Images2],[Images3],[Images4],[Images5],[Images6],[Images7],[Images8],[PhoneVersion],[AddTime])" +
-                                              " VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}')",
+                string sqlCmd_MaxOrder = "SELECT MAX([ORDER]) FROM [dbo].[RecommendGames]";
+                object maxOrder = SqlHelper.Instance.ExecuteScalar(sqlCmd_MaxOrder);
+
+                int maxOrderInt = 0;
+                if (sqlCmd_MaxOrder != null)
+                {
+                    int.TryParse(maxOrder.ToString(), out maxOrderInt);
+                }
+
+                string sqlCmd = string.Format("INSERT INTO [dbo].[RecommendGames] ([GameType],[GameName],[Version],[GameID],[PusherName],[UpdateTime],[GameDetails],[LogoPath],[SourceType],[DownloadCount],[Price],[FileSize],[Starts],[HeadImage],[Rating],[Images1],[Images2],[Images3],[Images4],[Images5],[Images6],[Images7],[Images8],[PhoneVersion],[AddTime],[Order])" +
+                                              " VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}')",
                                               gameModel.GameType, gameModel.GameName, gameModel.Version, gameModel.GameID, gameModel.PusherName, gameModel.UpdateTime, gameModel.GameDetails, gameModel.LogoPath,
                                               gameModel.SourceType, gameModel.DownloadCount, gameModel.Price, gameModel.FileSize, gameModel.Starts, gameModel.HeadImage, gameModel.Rating,
-                                              gameModel.Images1, gameModel.Images2, gameModel.Images3, gameModel.Images4, gameModel.Images5, gameModel.Images6, gameModel.Images7, gameModel.Images8, gameModel.PhoneVersion, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                                              gameModel.Images1, gameModel.Images2, gameModel.Images3, gameModel.Images4, gameModel.Images5, gameModel.Images6, gameModel.Images7, gameModel.Images8,
+                                              gameModel.PhoneVersion, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), maxOrderInt + 1);
 
                 SqlHelper.Instance.ExecuteCommand(sqlCmd);
             }
@@ -48,7 +59,7 @@ namespace Controller
         {
             try
             {
-                string sqlCmd = string.Format("SELECT * FROM [dbo].[RecommendGames] w1,(SELECT TOP {0} ID FROM (SELECT TOP {1} [ID], [AddTime] FROM [RecommendGames] WHERE [SourceType] != 'header' ORDER BY [AddTime] DESC, ID DESC) w ORDER BY w.[AddTime] ASC, w.ID ASC) w2 WHERE w1.ID = w2.ID ORDER BY w1.[AddTime] DESC, w1.ID DESC",
+                string sqlCmd = string.Format("SELECT * FROM [dbo].[RecommendGames] w1,(SELECT TOP {0} ID FROM (SELECT TOP {1} [ID], [AddTime],[Order] FROM [RecommendGames] WHERE [SourceType] != 'header' ORDER BY [Order] DESC,[AddTime] DESC, ID DESC) w ORDER BY w.[Order] ASC, w.[AddTime] ASC, w.ID ASC) w2 WHERE w1.ID = w2.ID ORDER BY w1.[Order] DESC, w1.[AddTime] DESC, w1.ID DESC",
                                               getCount, pageNumber * getCount + getCount);
 
                 DataTable table = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
@@ -59,6 +70,8 @@ namespace Controller
                 }
 
                 List<GameModel> result = new List<GameModel>();
+
+                int order_t = -1;
                 for (int i = 0; i < table.Rows.Count; i++)
                 {
                     GameModel r_t = new GameModel
@@ -87,7 +100,8 @@ namespace Controller
                         Starts = table.Rows[i]["Starts"].ToString(),
                         UpdateTime = ((DateTime)table.Rows[i]["UpdateTime"]).ToString("yyyy-MM-dd"),
                         Version = table.Rows[i]["Version"].ToString(),
-                        ID = table.Rows[i]["ID"].ToString()
+                        ID = table.Rows[i]["ID"].ToString(),
+                        Order = int.TryParse(table.Rows[i]["Order"].ToString(), out order_t) ? order_t : order_t,
                     };
 
                     result.Add(r_t);
@@ -190,7 +204,7 @@ namespace Controller
         {
             try
             {
-                string sqlCmd = string.Format("UPDATE　[dbo].[RecommendGames]　SET [DownloadCount] = [DownloadCount] + 1 WHERE [ID] = '{0}'", id);
+                string sqlCmd = string.Format("UPDATE [dbo].[RecommendGames] SET [DownloadCount] = [DownloadCount] + 1 WHERE [ID] = '{0}'", id);
 
                 SqlHelper.Instance.ExecuteCommand(sqlCmd);
             }
@@ -240,7 +254,7 @@ namespace Controller
             try
             {
                 string sqlCmd = string.Format("SELECT * FROM [dbo].[NewsInfoForJson] w1,(SELECT TOP {0} ID FROM (SELECT TOP {1} [ID], [NewsTime] FROM [NewsInfoForJson] WHERE [NewsForm] = '{2}' ORDER BY [NewsTime] DESC, ID DESC) w ORDER BY w.[NewsTime] ASC, w.ID ASC) w2 WHERE w1.ID = w2.ID ORDER BY w1.[NewsTime] DESC, w1.ID DESC",
-                                              getCount, pageNumber * getCount + getCount,newsForm);
+                                              getCount, pageNumber * getCount + getCount, newsForm);
 
                 DataTable table = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
 
@@ -288,8 +302,8 @@ namespace Controller
             {
                 string sqlCmd = string.Format("UPDATE　[dbo].[NewsInfoForJson]　SET [Titlepic] = '{0}',[Title] = '{1}',[NewsForm] = '{2}',[NewsTime] = '{3}',[Onclick] = '{4}',[ClassName] = '{5}',"
                     + "[Filename] = '{6}',[Classid] = '{7}',[IsHearder] = '{8}',[befrom] = '{9}',[isbottom] = '{10}' WHERE [ID]= '{11}'",
-                    newsInfoForJson.Titlepic,newsInfoForJson.Title,newsInfoForJson.NewsForm,newsInfoForJson.NewsTime,newsInfoForJson.Onclick,newsInfoForJson.ClassName,newsInfoForJson.Filename,newsInfoForJson.Classid,
-                    newsInfoForJson.IsHearder,newsInfoForJson.befrom,newsInfoForJson.isbottom,newsInfoForJson.Id);
+                    newsInfoForJson.Titlepic, newsInfoForJson.Title, newsInfoForJson.NewsForm, newsInfoForJson.NewsTime, newsInfoForJson.Onclick, newsInfoForJson.ClassName, newsInfoForJson.Filename, newsInfoForJson.Classid,
+                    newsInfoForJson.IsHearder, newsInfoForJson.befrom, newsInfoForJson.isbottom, newsInfoForJson.Id);
 
                 SqlHelper.Instance.ExecuteCommand(sqlCmd);
             }
@@ -305,7 +319,7 @@ namespace Controller
         {
             try
             {
-                string sqlCmd = string.Format("UPDATE　[dbo].[NewsInfoForJson]　SET [Onclick] = [Onclick] + 1 WHERE [ID] = '{0}'", id);
+                string sqlCmd = string.Format("UPDATE [dbo].[NewsInfoForJson] SET [Onclick] = [Onclick] + 1 WHERE [ID] = '{0}'", id);
 
                 SqlHelper.Instance.ExecuteCommand(sqlCmd);
             }
@@ -317,5 +331,30 @@ namespace Controller
             }
         }
 
+
+        public void UpdateOrderForGame(List<GameModel> gameList_t)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(SqlHelper.Instance.ConnectionString))
+                {
+                    conn.Open();
+                    foreach (var item in gameList_t)
+                    {
+                        string command = string.Format("UPDATE [dbo].[RecommendGames] SET [Order] = '{0}' WHERE [ID] = '{1}'", item.Order, item.ID);
+                        using (SqlCommand cmd = new SqlCommand(command, conn))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "RecommendGamesControl.UpdateOrderForGame");
+                throw ex;
+            }
+        }
     }
 }

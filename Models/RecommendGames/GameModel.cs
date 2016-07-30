@@ -34,5 +34,9 @@ namespace Models.RecommendGames
 
         public string ID { get; set; }
         public int Order { get; set; }
+
+        public int RealDownCount { get; set; }
+
+        public bool IsTopmost { get; set; }
     }
 }

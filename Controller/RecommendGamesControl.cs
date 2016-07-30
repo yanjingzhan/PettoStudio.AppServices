@@ -35,12 +35,12 @@ namespace Controller
                     int.TryParse(maxOrder.ToString(), out maxOrderInt);
                 }
 
-                string sqlCmd = string.Format("INSERT INTO [dbo].[RecommendGames] ([GameType],[GameName],[Version],[GameID],[PusherName],[UpdateTime],[GameDetails],[LogoPath],[SourceType],[DownloadCount],[Price],[FileSize],[Starts],[HeadImage],[Rating],[Images1],[Images2],[Images3],[Images4],[Images5],[Images6],[Images7],[Images8],[PhoneVersion],[AddTime],[Order])" +
-                                              " VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}')",
+                string sqlCmd = string.Format("INSERT INTO [dbo].[RecommendGames] ([GameType],[GameName],[Version],[GameID],[PusherName],[UpdateTime],[GameDetails],[LogoPath],[SourceType],[DownloadCount],[Price],[FileSize],[Starts],[HeadImage],[Rating],[Images1],[Images2],[Images3],[Images4],[Images5],[Images6],[Images7],[Images8],[PhoneVersion],[AddTime],[Order],[IsTopmost],[RealDownCount])" +
+                                              " VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}','{26}','0')",
                                               gameModel.GameType, gameModel.GameName, gameModel.Version, gameModel.GameID, gameModel.PusherName, gameModel.UpdateTime, gameModel.GameDetails, gameModel.LogoPath,
                                               gameModel.SourceType, gameModel.DownloadCount, gameModel.Price, gameModel.FileSize, gameModel.Starts, gameModel.HeadImage, gameModel.Rating,
                                               gameModel.Images1, gameModel.Images2, gameModel.Images3, gameModel.Images4, gameModel.Images5, gameModel.Images6, gameModel.Images7, gameModel.Images8,
-                                              gameModel.PhoneVersion, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), maxOrderInt + 1);
+                                              gameModel.PhoneVersion, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), maxOrderInt + 1, gameModel.IsTopmost);
 
                 SqlHelper.Instance.ExecuteCommand(sqlCmd);
             }
@@ -55,12 +55,18 @@ namespace Controller
         /// 
         /// </summary>
         /// <param name="pageNumber">从0开始</param>
-        public List<GameModel> GetGameList(int getCount, int pageNumber)
+        public List<GameModel> GetGameList(int getCount, int pageNumber, string phoneVersion = "")
         {
             try
             {
-                string sqlCmd = string.Format("SELECT * FROM [dbo].[RecommendGames] w1,(SELECT TOP {0} ID FROM (SELECT TOP {1} [ID], [AddTime],[Order] FROM [RecommendGames] WHERE [SourceType] != 'header' ORDER BY [Order] DESC,[AddTime] DESC, ID DESC) w ORDER BY w.[Order] ASC, w.[AddTime] ASC, w.ID ASC) w2 WHERE w1.ID = w2.ID ORDER BY w1.[Order] DESC, w1.[AddTime] DESC, w1.ID DESC",
+                string sqlCmd = string.Format("SELECT * FROM [dbo].[RecommendGames] w1,(SELECT TOP {0} ID FROM (SELECT TOP {1} [ID], [AddTime],[Order],[IsTopmost] FROM [RecommendGames] WHERE [SourceType] != 'header' ORDER BY [IsTopmost] DESC, [Order] DESC,[AddTime] DESC, ID DESC) w ORDER BY w.[IsTopmost] ASC, w.[Order] ASC, w.[AddTime] ASC, w.ID ASC) w2 WHERE w1.ID = w2.ID ORDER BY w1.[IsTopmost] DESC, w1.[Order] DESC, w1.[AddTime] DESC, w1.ID DESC",
                                               getCount, pageNumber * getCount + getCount);
+
+                if (!string.IsNullOrEmpty(phoneVersion))
+                {
+                    sqlCmd = string.Format("SELECT * FROM [dbo].[RecommendGames] w1,(SELECT TOP {0} ID FROM (SELECT TOP {1} [ID], [AddTime],[Order],[IsTopmost] FROM [RecommendGames] WHERE [SourceType] != 'header' AND [PhoneVersion] = '{2}' ORDER BY [IsTopmost] DESC, [Order] DESC,[AddTime] DESC, ID DESC) w ORDER BY  w.[IsTopmost] ASC,w.[Order] ASC, w.[AddTime] ASC, w.ID ASC) w2 WHERE w1.ID = w2.ID ORDER BY w1.[IsTopmost] DESC, w1.[Order] DESC, w1.[AddTime] DESC, w1.ID DESC",
+                                              getCount, pageNumber * getCount + getCount, phoneVersion);
+                }
 
                 DataTable table = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
 
@@ -102,6 +108,8 @@ namespace Controller
                         Version = table.Rows[i]["Version"].ToString(),
                         ID = table.Rows[i]["ID"].ToString(),
                         Order = int.TryParse(table.Rows[i]["Order"].ToString(), out order_t) ? order_t : order_t,
+                        IsTopmost = (bool)table.Rows[i]["IsTopmost"],
+                        RealDownCount = (int)table.Rows[i]["RealDownCount"],
                     };
 
                     result.Add(r_t);
@@ -120,12 +128,19 @@ namespace Controller
         /// 
         /// </summary>
         /// <param name="pageNumber">从0开始</param>
-        public List<GameModel> GetHeaderGameList(int getCount)
+        public List<GameModel> GetHeaderGameList(int getCount, string phoneVersion = "")
         {
             try
             {
                 string sqlCmd = string.Format("SELECT Top {0} * FROM [dbo].[RecommendGames] WHERE [SourceType] = 'header' ORDER BY [AddTime] DESC",
                                               getCount);
+
+                if (!string.IsNullOrEmpty(phoneVersion))
+                {
+                    sqlCmd = string.Format("SELECT Top {0} * FROM [dbo].[RecommendGames] WHERE [SourceType] = 'header' AND [PhoneVersion] = '{1}' ORDER BY [AddTime] DESC",
+                                              getCount, phoneVersion);
+                }
+
 
                 DataTable table = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
 
@@ -163,7 +178,9 @@ namespace Controller
                         Starts = table.Rows[i]["Starts"].ToString(),
                         UpdateTime = ((DateTime)table.Rows[i]["UpdateTime"]).ToString("yyyy-MM-dd"),
                         Version = table.Rows[i]["Version"].ToString(),
-                        ID = table.Rows[i]["ID"].ToString()
+                        ID = table.Rows[i]["ID"].ToString(),
+                        IsTopmost = (bool)table.Rows[i]["IsTopmost"],
+                        RealDownCount = (int)table.Rows[i]["RealDownCount"],
                     };
 
                     result.Add(r_t);
@@ -204,7 +221,7 @@ namespace Controller
         {
             try
             {
-                string sqlCmd = string.Format("UPDATE [dbo].[RecommendGames] SET [DownloadCount] = [DownloadCount] + 1 WHERE [ID] = '{0}'", id);
+                string sqlCmd = string.Format("UPDATE [dbo].[RecommendGames] SET [DownloadCount] = [DownloadCount] + 1,[RealDownCount] = [RealDownCount] + 1 WHERE [ID] = '{0}'", id);
 
                 SqlHelper.Instance.ExecuteCommand(sqlCmd);
             }
@@ -341,7 +358,7 @@ namespace Controller
                     conn.Open();
                     foreach (var item in gameList_t)
                     {
-                        string command = string.Format("UPDATE [dbo].[RecommendGames] SET [Order] = '{0}' WHERE [ID] = '{1}'", item.Order, item.ID);
+                        string command = string.Format("UPDATE [dbo].[RecommendGames] SET [Order] = '{0}',[IsTopmost] = '{1}' WHERE [ID] = '{2}'", item.Order, item.IsTopmost, item.ID);
                         using (SqlCommand cmd = new SqlCommand(command, conn))
                         {
                             cmd.ExecuteNonQuery();

@@ -20,7 +20,7 @@ namespace RecommendGamesServices
                     updatetime, gamedetails, logopath,
                     sourcetype, downloadcount, price, filesize, starts, headimage, rating,
                     images1, images2, images3, images4,
-                    images5, images6, images7, images8, phoneversion;
+                    images5, images6, images7, images8, phoneversion, istopmost;
 
                 string id, titlepic, title, newsform, newstime, onclick, classname, filename, classid, ishearder, newstext, befrom, isbottom;
 
@@ -54,7 +54,7 @@ namespace RecommendGamesServices
                 images7 = Request["images7"] == null ? "" : Request["images7"].Trim();
                 images8 = Request["images8"] == null ? "" : Request["images8"].Trim();
                 phoneversion = Request["phoneversion"] == null ? "" : Request["phoneversion"].Trim();
-
+                istopmost = Request["istopmost"] == null ? "" : Request["istopmost"].Trim();
 
                 id = Request["id"] == null ? "" : Request["id"].Trim();
                 titlepic = Request["titlepic"] == null ? "" : Request["titlepic"].Trim();
@@ -78,7 +78,7 @@ namespace RecommendGamesServices
                 timeAuth = Request["rd"] == null ? "" : Request["rd"].Trim();
                 cryptStr = Request["auth"] == null ? "" : Request["auth"].Trim();
 
-                if(!IsAuthSuccess(action,timeAuth,cryptStr))
+                if (!IsAuthSuccess(action, timeAuth, cryptStr))
                 {
                     Response.Write("Server ERROR!");
                     return;
@@ -92,15 +92,15 @@ namespace RecommendGamesServices
                                 updatetime, gamedetails, logopath, sourcetype, downloadcount,
                                 price, filesize, starts, headimage, rating,
                                 images1, images2, images3, images4,
-                                images5, images6, images7, images8, phoneversion);
+                                images5, images6, images7, images8, phoneversion, istopmost);
                         break;
 
                     case "getgamelist":
-                        GetGameList(getcount, pagenumber);
+                        GetGameList(getcount, pagenumber, phoneversion);
                         break;
 
                     case "getheadergamelist":
-                        GetHeaderGameList(getcount);
+                        GetHeaderGameList(getcount, phoneversion);
                         break;
 
                     case "updategamebyid":
@@ -148,7 +148,7 @@ namespace RecommendGamesServices
                             string updatetime, string gamedetails, string logopath, string sourcetype, string downloadcount,
                             string price, string filesize, string starts, string headimage, string rating,
                             string images1, string images2, string images3, string images4,
-                            string images5, string images6, string images7, string images8, string phoneversion)
+                            string images5, string images6, string images7, string images8, string phoneversion, string istopmost)
         {
 
             try
@@ -178,7 +178,8 @@ namespace RecommendGamesServices
                         SourceType = sourcetype,
                         Starts = starts,
                         UpdateTime = updatetime,
-                        Version = version
+                        Version = version,
+                        IsTopmost = string.IsNullOrEmpty(istopmost) ? false : bool.Parse(istopmost),
                     });
 
                 Response.Write("200:ok");
@@ -191,11 +192,11 @@ namespace RecommendGamesServices
             }
         }
 
-        public void GetGameList(string getCount, string pageNumber)
+        public void GetGameList(string getCount, string pageNumber, string phoneVersion)
         {
             try
             {
-                string result = JsonHelper.SerializerToJson(new RecommendGamesControl().GetGameList(int.Parse(getCount), int.Parse(pageNumber)));
+                string result = JsonHelper.SerializerToJson(new RecommendGamesControl().GetGameList(int.Parse(getCount), int.Parse(pageNumber), phoneVersion));
 
                 Response.Write(Encryption.Encrypt(result));
                 LogWriter.WriteLog(result, Page, "GetGameList");
@@ -207,11 +208,11 @@ namespace RecommendGamesServices
             }
         }
 
-        public void GetHeaderGameList(string getCount)
+        public void GetHeaderGameList(string getCount, string phoneVersion)
         {
             try
             {
-                string result = JsonHelper.SerializerToJson(new RecommendGamesControl().GetHeaderGameList(int.Parse(getCount)));
+                string result = JsonHelper.SerializerToJson(new RecommendGamesControl().GetHeaderGameList(int.Parse(getCount), phoneVersion));
 
                 Response.Write(Encryption.Encrypt(result));
                 LogWriter.WriteLog(result, Page, "GetHeaderGameList");
@@ -404,7 +405,7 @@ namespace RecommendGamesServices
         {
             //LogWriter.WriteLog(action + "," + timeAuth + "," + HttpUtility.UrlDecode(Encryption.Encrypt(action + timeAuth)) + "," + crpyStr,
             //    Page, "IsAuthSuccess");
-            return  HttpUtility.UrlDecode(Encryption.Encrypt(action + timeAuth)) == crpyStr;
+            return HttpUtility.UrlDecode(Encryption.Encrypt(action + timeAuth)) == crpyStr;
         }
     }
 }

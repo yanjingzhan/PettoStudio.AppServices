@@ -222,8 +222,12 @@ namespace Controller
             try
             {
                 string sqlCmd = string.Format("UPDATE [dbo].[RecommendGames] SET [DownloadCount] = [DownloadCount] + 1,[RealDownCount] = [RealDownCount] + 1 WHERE [ID] = '{0}'", id);
-
                 SqlHelper.Instance.ExecuteCommand(sqlCmd);
+
+                Dictionary<string,string> dt = new Dictionary<string,string>();
+                dt.Add("@gameid",id.ToString());
+
+                SqlHelper.Instance.ExecuteProcedure("sp_AddDownloadCount", dt);
             }
             catch (Exception ex)
             {

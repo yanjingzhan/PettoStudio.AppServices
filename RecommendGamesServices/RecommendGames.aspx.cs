@@ -12,6 +12,8 @@ namespace RecommendGamesServices
 {
     public partial class RecommendGames : System.Web.UI.Page
     {
+        private bool _isLog = false;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -183,7 +185,11 @@ namespace RecommendGamesServices
                     });
 
                 Response.Write("200:ok");
-                LogWriter.WriteLog("200:ok", Page, "AddGames");
+
+                if (_isLog)
+                {
+                    LogWriter.WriteLog("200:ok", Page, "AddGames");
+                }
             }
             catch (Exception ex)
             {
@@ -199,7 +205,11 @@ namespace RecommendGamesServices
                 string result = JsonHelper.SerializerToJson(new RecommendGamesControl().GetGameList(int.Parse(getCount), int.Parse(pageNumber), phoneVersion));
 
                 Response.Write(Encryption.Encrypt(result));
-                LogWriter.WriteLog(result, Page, "GetGameList");
+
+                if (_isLog)
+                {
+                    LogWriter.WriteLog(result, Page, "GetGameList");
+                }
             }
             catch (Exception ex)
             {
@@ -215,7 +225,11 @@ namespace RecommendGamesServices
                 string result = JsonHelper.SerializerToJson(new RecommendGamesControl().GetHeaderGameList(int.Parse(getCount), phoneVersion));
 
                 Response.Write(Encryption.Encrypt(result));
-                LogWriter.WriteLog(result, Page, "GetHeaderGameList");
+
+                if (_isLog)
+                {
+                    LogWriter.WriteLog(result, Page, "GetHeaderGameList");
+                }
             }
             catch (Exception ex)
             {
@@ -263,7 +277,11 @@ namespace RecommendGamesServices
                     });
 
                 Response.Write("200:ok");
-                LogWriter.WriteLog("200:ok", Page, "UpdateGameById");
+
+                if (_isLog)
+                {
+                    LogWriter.WriteLog("200:ok", Page, "UpdateGameById");
+                }
             }
             catch (Exception ex)
             {
@@ -279,7 +297,11 @@ namespace RecommendGamesServices
                 new RecommendGamesControl().AddDownloadCountById(int.Parse(id));
 
                 Response.Write("200:ok");
-                LogWriter.WriteLog("200:ok", Page, "AddDownloadCountById");
+
+                if (_isLog)
+                {
+                    LogWriter.WriteLog("200:ok", Page, "AddDownloadCountById");
+                }
             }
             catch (Exception ex)
             {
@@ -310,7 +332,11 @@ namespace RecommendGamesServices
                     });
 
                 Response.Write("200:ok");
-                LogWriter.WriteLog("200:ok", Page, "AddNews");
+
+                if (_isLog)
+                {
+                    LogWriter.WriteLog("200:ok", Page, "AddNews");
+                }
             }
             catch (Exception ex)
             {
@@ -326,7 +352,11 @@ namespace RecommendGamesServices
                 string result = JsonHelper.SerializerToJson(new RecommendGamesControl().GetNewsInfoForJsonList(int.Parse(getCount), int.Parse(pageNumber), newsForm));
 
                 Response.Write(Encryption.Encrypt(result));
-                LogWriter.WriteLog(result, Page, "GetNewsInfoForJsonList");
+
+                if (_isLog)
+                {
+                    LogWriter.WriteLog(result, Page, "GetNewsInfoForJsonList");
+                }
             }
             catch (Exception ex)
             {
@@ -358,7 +388,11 @@ namespace RecommendGamesServices
                 });
 
                 Response.Write("200:ok");
-                LogWriter.WriteLog("200:ok", Page, "UpdateNewsById");
+
+                if (_isLog)
+                {
+                    LogWriter.WriteLog("200:ok", Page, "UpdateNewsById");
+                }
             }
             catch (Exception ex)
             {
@@ -374,7 +408,10 @@ namespace RecommendGamesServices
                 new RecommendGamesControl().AddNewsClickCountById(int.Parse(id));
 
                 Response.Write("200:ok");
-                LogWriter.WriteLog("200:ok", Page, "AddNewsClickCountById");
+                if (_isLog)
+                {
+                    LogWriter.WriteLog("200:ok", Page, "AddNewsClickCountById");
+                }
             }
             catch (Exception ex)
             {
@@ -392,7 +429,11 @@ namespace RecommendGamesServices
                 new RecommendGamesControl().UpdateOrderForGame(gameList);
 
                 Response.Write("200:ok");
-                LogWriter.WriteLog("200:ok", Page, "UpdateOrderForGame");
+
+                if (_isLog)
+                {
+                    LogWriter.WriteLog("200:ok", Page, "UpdateOrderForGame");
+                }
             }
             catch (Exception ex)
             {

@@ -10,6 +10,8 @@ namespace RecommendGamesServices
 {
     public class LogWriter
     {
+
+
         /// <summary>
         /// 记录日志
         /// </summary>

@@ -88,6 +88,33 @@ namespace DataBaseLib
             }
         }
 
+        public void ExecuteProcedure(string spName, Dictionary<string, string> parameters)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(spName, conn))
+                    {
+                        conn.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        foreach (var item in parameters)
+                        {
+                            cmd.Parameters.AddWithValue(item.Key, item.Value);
+                        }
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+
+        }
+
 
         /// <summary>
         /// DataTable

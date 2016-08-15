@@ -195,6 +195,77 @@ namespace Controller
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pageNumber">从0开始</param>
+        public List<GameModel> GetConnerGameList(int getCount, string phoneVersion = "")
+        {
+            try
+            {
+                string sqlCmd = string.Format("SELECT Top {0} * FROM [dbo].[RecommendGames] WHERE [SourceType] = 'conner' ORDER BY [AddTime] DESC",
+                                              getCount);
+
+                if (!string.IsNullOrEmpty(phoneVersion))
+                {
+                    sqlCmd = string.Format("SELECT Top {0} * FROM [dbo].[RecommendGames] WHERE [SourceType] = 'conner' AND [PhoneVersion] = '{1}' ORDER BY [AddTime] DESC",
+                                              getCount, phoneVersion);
+                }
+
+
+                DataTable table = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (table == null || table.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+                List<GameModel> result = new List<GameModel>();
+                for (int i = 0; i < table.Rows.Count; i++)
+                {
+                    GameModel r_t = new GameModel
+                    {
+                        DownloadCount = table.Rows[i]["DownloadCount"].ToString(),
+                        FileSize = table.Rows[i]["FileSize"].ToString(),
+                        GameDetails = table.Rows[i]["GameDetails"].ToString(),
+                        GameID = table.Rows[i]["GameID"].ToString(),
+                        GameName = table.Rows[i]["GameName"].ToString(),
+                        GameType = table.Rows[i]["GameType"].ToString(),
+                        HeadImage = table.Rows[i]["HeadImage"].ToString(),
+                        Images1 = table.Rows[i]["Images1"].ToString(),
+                        Images2 = table.Rows[i]["Images2"].ToString(),
+                        Images3 = table.Rows[i]["Images3"].ToString(),
+                        Images4 = table.Rows[i]["Images4"].ToString(),
+                        Images5 = table.Rows[i]["Images5"].ToString(),
+                        Images6 = table.Rows[i]["Images6"].ToString(),
+                        Images7 = table.Rows[i]["Images7"].ToString(),
+                        Images8 = table.Rows[i]["Images8"].ToString(),
+                        LogoPath = table.Rows[i]["LogoPath"].ToString(),
+                        PhoneVersion = table.Rows[i]["PhoneVersion"].ToString(),
+                        Price = table.Rows[i]["Price"].ToString(),
+                        PusherName = table.Rows[i]["PusherName"].ToString(),
+                        Rating = table.Rows[i]["Rating"].ToString(),
+                        SourceType = table.Rows[i]["SourceType"].ToString(),
+                        Starts = table.Rows[i]["Starts"].ToString(),
+                        UpdateTime = ((DateTime)table.Rows[i]["UpdateTime"]).ToString("yyyy-MM-dd"),
+                        Version = table.Rows[i]["Version"].ToString(),
+                        ID = table.Rows[i]["ID"].ToString(),
+                        IsTopmost = (bool)table.Rows[i]["IsTopmost"],
+                        RealDownCount = (int)table.Rows[i]["RealDownCount"],
+                    };
+
+                    result.Add(r_t);
+                }
+
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
 
         public void UpdateGameById(GameModel gameModel)
         {

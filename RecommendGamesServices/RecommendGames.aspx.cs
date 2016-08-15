@@ -105,6 +105,10 @@ namespace RecommendGamesServices
                         GetHeaderGameList(getcount, phoneversion);
                         break;
 
+                    case "getconnergamelist":
+                        GetConnerGameList(getcount, phoneversion);
+                        break;
+
                     case "updategamebyid":
                         UpdateGameById(id, gametype, gamename, version, gameid, pushername,
                              updatetime, gamedetails, logopath, sourcetype, downloadcount,
@@ -235,6 +239,26 @@ namespace RecommendGamesServices
             {
                 Response.Write(ex.Message);
                 LogWriter.WriteLog(ex.Message, Page, "GetHeaderGameList");
+            }
+        }
+
+        public void GetConnerGameList(string getCount, string phoneVersion)
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(new RecommendGamesControl().GetConnerGameList(int.Parse(getCount), phoneVersion));
+
+                Response.Write(Encryption.Encrypt(result));
+
+                if (_isLog)
+                {
+                    LogWriter.WriteLog(result, Page, "GetConnerGameList");
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetConnerGameList");
             }
         }
 

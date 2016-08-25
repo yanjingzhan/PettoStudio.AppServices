@@ -59,12 +59,12 @@ namespace Controller
         {
             try
             {
-                string sqlCmd = string.Format("SELECT * FROM [dbo].[RecommendGames] w1,(SELECT TOP {0} ID FROM (SELECT TOP {1} [ID], [AddTime],[Order],[IsTopmost] FROM [RecommendGames] WHERE [SourceType] != 'header' ORDER BY [IsTopmost] DESC, [Order] DESC,[AddTime] DESC, ID DESC) w ORDER BY w.[IsTopmost] ASC, w.[Order] ASC, w.[AddTime] ASC, w.ID ASC) w2 WHERE w1.ID = w2.ID ORDER BY w1.[IsTopmost] DESC, w1.[Order] DESC, w1.[AddTime] DESC, w1.ID DESC",
+                string sqlCmd = string.Format("SELECT * FROM [dbo].[RecommendGames] w1,(SELECT TOP {0} ID FROM (SELECT TOP {1} [ID], [AddTime],[Order],[IsTopmost] FROM [RecommendGames] WHERE [SourceType] = 'list' ORDER BY [IsTopmost] DESC, [Order] DESC,[AddTime] DESC, ID DESC) w ORDER BY w.[IsTopmost] ASC, w.[Order] ASC, w.[AddTime] ASC, w.ID ASC) w2 WHERE w1.ID = w2.ID ORDER BY w1.[IsTopmost] DESC, w1.[Order] DESC, w1.[AddTime] DESC, w1.ID DESC",
                                               getCount, pageNumber * getCount + getCount);
 
                 if (!string.IsNullOrEmpty(phoneVersion))
                 {
-                    sqlCmd = string.Format("SELECT * FROM [dbo].[RecommendGames] w1,(SELECT TOP {0} ID FROM (SELECT TOP {1} [ID], [AddTime],[Order],[IsTopmost] FROM [RecommendGames] WHERE [SourceType] != 'header' AND [PhoneVersion] = '{2}' ORDER BY [IsTopmost] DESC, [Order] DESC,[AddTime] DESC, ID DESC) w ORDER BY  w.[IsTopmost] ASC,w.[Order] ASC, w.[AddTime] ASC, w.ID ASC) w2 WHERE w1.ID = w2.ID ORDER BY w1.[IsTopmost] DESC, w1.[Order] DESC, w1.[AddTime] DESC, w1.ID DESC",
+                    sqlCmd = string.Format("SELECT * FROM [dbo].[RecommendGames] w1,(SELECT TOP {0} ID FROM (SELECT TOP {1} [ID], [AddTime],[Order],[IsTopmost] FROM [RecommendGames] WHERE [SourceType] = 'list' AND [PhoneVersion] = '{2}' ORDER BY [IsTopmost] DESC, [Order] DESC,[AddTime] DESC, ID DESC) w ORDER BY  w.[IsTopmost] ASC,w.[Order] ASC, w.[AddTime] ASC, w.ID ASC) w2 WHERE w1.ID = w2.ID ORDER BY w1.[IsTopmost] DESC, w1.[Order] DESC, w1.[AddTime] DESC, w1.ID DESC",
                                               getCount, pageNumber * getCount + getCount, phoneVersion);
                 }
 

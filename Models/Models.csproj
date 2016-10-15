@@ -41,6 +41,7 @@
     <Compile Include="AccountServices\AccountInfo.cs" />
     <Compile Include="AccountServices\AppModel.cs" />
     <Compile Include="AccountServices\CountryGroupInfo.cs" />
+    <Compile Include="AmazonFullInfoServices\AmazonFullInfoServicesModel.cs" />
     <Compile Include="DreamSparkerModel.cs" />
     <Compile Include="GameManager\AndroidPushGameInfoModel.cs" />
     <Compile Include="GameManager\AppInfoTempModel.cs" />

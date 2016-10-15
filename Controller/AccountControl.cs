@@ -194,7 +194,7 @@ namespace Controller
         }
 
 
-        public List<AccountInfo> GetAccountInfoListForShouDong(int accountCount, string country, string userName)
+        public List<AccountInfo> GetAccountInfoListForShouDong(int accountCount, string country, string userName, string person)
         {
             try
             {
@@ -254,6 +254,12 @@ namespace Controller
                     new ShuaControl().AddShuaRecordToDataBase(country, AdInfoList.Count.ToString(), "0");
                 }
 
+                Dictionary<string, string> dt = new Dictionary<string, string>();
+                dt.Add("@person", person);
+                dt.Add("@today", DateTime.Now.ToString("yyyy-MM-dd"));
+                dt.Add("@updatetime", DateTime.Now.ToString("yyyy-MM-dd HH:mm:dd"));
+
+                SqlHelper.Instance.ExecuteProcedure("sp_AddShuaCount", dt);
 
 
                 return AdInfoList;
@@ -597,6 +603,36 @@ namespace Controller
             }
         }
 
+        public void UpdateAccountStateAndUserName(string account, string state,string userName)
+        {
+            try
+            {
+                string sqlCmdUpdate = string.Empty;
+                if (state == "tubevia")
+                {
+                    sqlCmdUpdate = string.Format("UPDATE [dbo].[Accounts] SET [State] = '{0}',[UpdateTime] = '{1}',[BindingTime] = '{2}',[UserName]='{4}' WHERE [Account]= '{3}' ",
+                                           state, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), account,userName);
+                }
+                else if (state == "die")
+                {
+                    sqlCmdUpdate = string.Format("UPDATE [dbo].[Accounts] SET [State] = '{0}',[UpdateTime] = '{1}',[Group]= '',[UserName]='{3}' WHERE [Account]='{2}' ",
+                         state, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), account, userName);
+                }
+                else
+                {
+                    sqlCmdUpdate = string.Format("UPDATE [dbo].[Accounts] SET [State] = '{0}',[UpdateTime] = '{1}',[UserName]='{3}' WHERE [Account]='{2}' ",
+                                             state, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), account, userName);
+                }
+
+                SqlHelper.Instance.ExecuteCommand(sqlCmdUpdate);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
+                throw ex;
+            }
+        }
+
         public void UpdateAccountStatePhoneType(string userName, string account, string state, string phoneType)
         {
             try
@@ -686,7 +722,7 @@ namespace Controller
             }
         }
 
-        public void InsertAccount(AccountInfo accountInfo)
+        public void InsertAccount(AccountInfo accountInfo,string ip = "0.0.0.0")
         {
             try
             {
@@ -697,8 +733,8 @@ namespace Controller
                     throw new Exception(string.Format("{0} has been is DB!", accountInfo.Account));
                 }
 
-                string sqlCmdInsert = string.Format("INSERT INTO [dbo].[Accounts] ([Account],[Password],[UserName],[Country],[State],[Group],[PhoneType],[UpdateTime],[AddTime],[ShouDongGroupDone]) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}')",
-                    accountInfo.Account, accountInfo.Password, accountInfo.UserName, accountInfo.Country, accountInfo.State, accountInfo.Group, accountInfo.PhoneType, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), "0");
+                string sqlCmdInsert = string.Format("INSERT INTO [dbo].[Accounts] ([Account],[Password],[UserName],[Country],[State],[Group],[PhoneType],[UpdateTime],[AddTime],[ShouDongGroupDone],[IP]) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}')",
+                    accountInfo.Account, accountInfo.Password, accountInfo.UserName, accountInfo.Country, accountInfo.State, accountInfo.Group, accountInfo.PhoneType, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), "0",ip);
                 SqlHelper.Instance.ExecuteCommand(sqlCmdInsert);
             }
             catch (Exception ex)

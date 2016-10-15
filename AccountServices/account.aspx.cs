@@ -17,7 +17,7 @@ namespace AccountServices
         {
             if (!IsPostBack)
             {
-                string action, account, password, username, country, group, state, phonetype, accountcount, addTime, count, newstate;
+                string action, account, password, username, country, group, state, phonetype, accountcount, addTime, count, newstate, person;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 account = Request["account"] == null ? "" : Request["account"].Trim();
@@ -31,6 +31,7 @@ namespace AccountServices
                 addTime = Request["addtime"] == null ? "" : Request["addtime"].Trim();
                 count = Request["count"] == null ? "" : Request["count"].Trim();
                 newstate = Request["newstate"] == null ? "" : Request["newstate"].Trim();
+                person = Request["person"] == null ? "" : Request["person"].Trim();
 
 
                 switch (action.ToLower())
@@ -75,13 +76,15 @@ namespace AccountServices
                     case "updateaccountstatewithoutusername":
                         UpdateAccountStateWithoutUserName(account, state);
                         break;
-
+                    case "updateaccountstateandusername":
+                        UpdateAccountStateAndUserName(account, state, username);
+                        break;
                     case "updateaccountcountryandgroup":
                         UpdateAccountCountryAndGroup(account, country, group);
                         break;
 
                     case "getaccountinfolistforshoudong":
-                        GetAccountInfoListForShouDong(accountcount, country, username);
+                        GetAccountInfoListForShouDong(accountcount, country, username, person);
                         break;
 
                     case "checkaccount":
@@ -157,12 +160,12 @@ namespace AccountServices
             }
         }
 
-        public void GetAccountInfoListForShouDong(string accountCount, string country, string userName)
+        public void GetAccountInfoListForShouDong(string accountCount, string country, string userName, string person)
         {
             try
             {
                 string result = JsonHelper.SerializerToJson(
-                    new AccountControl().GetAccountInfoListForShouDong(int.Parse(accountCount), country, userName));
+                    new AccountControl().GetAccountInfoListForShouDong(int.Parse(accountCount), country, userName, person));
 
                 Response.Write(result);
                 LogWriter.WriteLog(result, Page, "GetAccountInfoListForShouDong");
@@ -267,6 +270,23 @@ namespace AccountServices
             {
                 Response.Write(ex.Message);
                 LogWriter.WriteLog(ex.Message, Page, "UpdateAccountStateWithoutUserName");
+            }
+
+
+        }
+        private void UpdateAccountStateAndUserName(string account, string state, string username)
+        {
+            try
+            {
+                new AccountControl().UpdateAccountStateAndUserName(account, state, username);
+
+                Response.Write("200:ok");
+                LogWriter.WriteLog("200:ok", Page, "UpdateAccountStateAndUserName");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "UpdateAccountStateAndUserName");
             }
 
 
@@ -383,6 +403,7 @@ namespace AccountServices
         {
             try
             {
+                string IP = Page.Request.ServerVariables["REMOTE_ADDR"].ToString();
                 new AccountControl().InsertAccount(
                     new AccountInfo
                     {
@@ -393,7 +414,7 @@ namespace AccountServices
                         PhoneType = phonetype,
                         State = state,
                         UserName = username
-                    }
+                    }, IP
                     );
 
                 Response.Write("200:ok");

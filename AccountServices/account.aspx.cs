@@ -17,7 +17,7 @@ namespace AccountServices
         {
             if (!IsPostBack)
             {
-                string action, account, password, username, country, group, state, phonetype, accountcount, addTime, count, newstate, person;
+                string action, account, password, username, country, group, state, phonetype, accountcount, addTime, count, newstate, person,computername;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 account = Request["account"] == null ? "" : Request["account"].Trim();
@@ -32,6 +32,7 @@ namespace AccountServices
                 count = Request["count"] == null ? "" : Request["count"].Trim();
                 newstate = Request["newstate"] == null ? "" : Request["newstate"].Trim();
                 person = Request["person"] == null ? "" : Request["person"].Trim();
+                computername = Request["computername"] == null ? "" : Request["computername"].Trim();
 
 
                 switch (action.ToLower())
@@ -45,7 +46,7 @@ namespace AccountServices
                         break;
 
                     case "insertaccount":
-                        InsertAccount(username, account, password, country, group, state, phonetype);
+                        InsertAccount(username, account, password, country, group, state, phonetype, computername);
                         break;
 
                     case "getaccountinfolistbystate":
@@ -399,7 +400,7 @@ namespace AccountServices
             }
         }
 
-        private void InsertAccount(string username, string account, string password, string country, string group, string state, string phonetype)
+        private void InsertAccount(string username, string account, string password, string country, string group, string state, string phonetype,string computername)
         {
             try
             {
@@ -414,7 +415,7 @@ namespace AccountServices
                         PhoneType = phonetype,
                         State = state,
                         UserName = username
-                    }, IP
+                    }, IP,computername
                     );
 
                 Response.Write("200:ok");

@@ -3,6 +3,7 @@ using Models.AccountServices;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -198,71 +199,105 @@ namespace Controller
         {
             try
             {
+                //Log.Write("开始" + DateTime.Now.ToString(), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "test");
 
-
-                string sqlCmd_t = string.Format("SELECT [ShouDongCountry] FROM [dbo].[ShouDongNumber]");
-                string country_t = SqlHelper.Instance.ExecuteScalar(sqlCmd_t).ToString();
-
-                string sqlCmd = string.Format("SELECT ShouDongCurrentNumber FROM [dbo].[ShouDongNumber]");
-                int currentGroupNumber = int.Parse(SqlHelper.Instance.ExecuteScalar(sqlCmd).ToString());
-
-                List<AccountInfo> AdInfoList = new List<AccountInfo>();
-
-                sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] ='binding' AND [Country]='{1}' AND [ShouDongGroupDone]<{2} AND ([UserName]='{3}' OR [UserName]='{3}.d') ORDER BY [ID] DESC",
-                              accountCount.ToString(), country_t, currentGroupNumber, userName);
-
-                if (userName == "1")
+                using (SqlConnection conn = new SqlConnection(SqlHelper.Instance.ConnectionString))
                 {
-                    sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] !='die' AND [ShouDongGroupDone]<{2} AND ([UserName]='{3}' OR [UserName]='{3}.d') ORDER BY [ID] DESC",
-                              accountCount.ToString(), country, currentGroupNumber, userName);
-                }
+                    conn.Open();
 
-                DataTable accountInfoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+                    string sqlCmd_t = string.Format("SELECT [ShouDongCountry] FROM [dbo].[ShouDongNumber]");
 
-                if (accountInfoTable == null || accountInfoTable.Rows.Count == 0)
-                {
-                    return null;
-                }
+                    SqlCommand cmd = new SqlCommand(sqlCmd_t, conn);
+                    string country_t = cmd.ExecuteScalar().ToString();
 
-                for (int i = 0; i < accountInfoTable.Rows.Count; i++)
-                {
-                    AccountInfo accountInfo_t = new AccountInfo
+                    string sqlCmd = string.Format("SELECT ShouDongCurrentNumber FROM [dbo].[ShouDongNumber]");
+                    cmd.CommandText = sqlCmd;
+                    int currentGroupNumber = int.Parse(cmd.ExecuteScalar().ToString());
+
+                    List<AccountInfo> AdInfoList = new List<AccountInfo>();
+
+                    sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] ='binding' AND [Country]='{1}' AND [ShouDongGroupDone]<{2} AND ([UserName]='{3}' OR [UserName]='{3}.d') ORDER BY [ID] DESC",
+                                  accountCount.ToString(), country_t, currentGroupNumber, userName);
+
+                    if (userName == "1")
                     {
-                        Account = accountInfoTable.Rows[i]["Account"].ToString(),
-                        Password = accountInfoTable.Rows[i]["Password"].ToString(),
-                        UserName = accountInfoTable.Rows[i]["UserName"].ToString(),
-                        Country = accountInfoTable.Rows[i]["Country"].ToString(),
-                        State = accountInfoTable.Rows[i]["State"].ToString(),
-                        PhoneType = accountInfoTable.Rows[i]["PhoneType"].ToString(),
-                        Group = accountInfoTable.Rows[i]["Group"].ToString(),
-                        UpdateTime = accountInfoTable.Rows[i]["UpdateTime"].ToString(),
-                        BindingTime = accountInfoTable.Rows[i]["BindingTime"].ToString()
-                    };
-
-                    AdInfoList.Add(accountInfo_t);
-                }
-
-                if (AdInfoList.Count > 0)
-                {
-                    foreach (var ai in AdInfoList)
-                    {
-                        string sql_t = string.Format("UPDATE [dbo].[Accounts] SET [ShouDongGroupDone]={0},[ShouDongTime]='{1}' WHERE [Account] = '{2}'",
-                                                    currentGroupNumber, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), ai.Account);
-                        SqlHelper.Instance.ExecuteScalar(sql_t);
+                        sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] !='die' AND [ShouDongGroupDone]<{2} AND ([UserName]='{3}' OR [UserName]='{3}.d') ORDER BY [ID] DESC",
+                                  accountCount.ToString(), country, currentGroupNumber, userName);
                     }
 
-                    new ShuaControl().AddShuaRecordToDataBase(country, AdInfoList.Count.ToString(), "0");
+                    SqlDataAdapter da = new SqlDataAdapter("sp_GetGetAccountInfoListForShouDong", conn);
+
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.AddWithValue("@currentGroupNumber", currentGroupNumber);
+                    da.SelectCommand.Parameters.AddWithValue("@userName", userName);
+                    da.SelectCommand.Parameters.AddWithValue("@updateTime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+                    DataTable accountInfoTable = new DataTable();
+                    da.Fill(accountInfoTable);
+
+                    if (accountInfoTable == null || accountInfoTable.Rows.Count == 0)
+                    {
+                        return null;
+                    }
+
+                    for (int i = 0; i < accountInfoTable.Rows.Count; i++)
+                    {
+                        AccountInfo accountInfo_t = new AccountInfo
+                        {
+                            Account = accountInfoTable.Rows[i]["Account"].ToString(),
+                            Password = accountInfoTable.Rows[i]["Password"].ToString(),
+                            UserName = accountInfoTable.Rows[i]["UserName"].ToString(),
+                            Country = accountInfoTable.Rows[i]["Country"].ToString(),
+                            State = accountInfoTable.Rows[i]["State"].ToString(),
+                            PhoneType = accountInfoTable.Rows[i]["PhoneType"].ToString(),
+                            Group = accountInfoTable.Rows[i]["Group"].ToString(),
+                            UpdateTime = accountInfoTable.Rows[i]["UpdateTime"].ToString(),
+                            BindingTime = accountInfoTable.Rows[i]["BindingTime"].ToString()
+                        };
+
+                        AdInfoList.Add(accountInfo_t);
+                    }
+
+                    if (AdInfoList.Count > 0)
+                    {
+                        string sqlCmdSelect = string.Format("SELECT COUNT(*) FROM [dbo].[ShuaRecord] WHERE [Date]='{0}' AND [Country]='{1}'",
+                                                                   DateTime.Now.Date.ToString("yyyy/MM/dd"), country);
+
+                        string sqlCmdAddRecord = string.Format("INSERT INTO [dbo].[ShuaRecord] ([Date],[ShuaSucCount],[ShuaFailCount],[Country],[UpdateTime]) VALUES ('{0}',{1},{2},'{3}','{4}')",
+                                                    DateTime.Now.Date.ToString("yyyy/MM/dd"), AdInfoList.Count, "0", country, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+                        cmd.CommandText = sqlCmdSelect;
+                        var c = cmd.ExecuteScalar();
+                        if (c != null && c.ToString() != "0")
+                        {
+                            sqlCmdAddRecord = string.Format("Update [dbo].[ShuaRecord] SET [ShuaSucCount]=[ShuaSucCount]+{0},[ShuaFailCount]=[ShuaFailCount]+{1},[UpdateTime]='{2}' WHERE [Date]='{3}'AND [Country]='{4}'",
+                                                    AdInfoList.Count, "0", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.Date.ToString("yyyy/MM/dd"), country);
+                        }
+
+                        cmd.CommandText = sqlCmdAddRecord;
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    //Dictionary<string, string> dt = new Dictionary<string, string>();
+                    //dt.Add("@person", person);
+                    //dt.Add("@today", DateTime.Now.ToString("yyyy-MM-dd"));
+                    //dt.Add("@updatetime", DateTime.Now.ToString("yyyy-MM-dd HH:mm:dd"));
+
+                    //SqlHelper.Instance.ExecuteProcedure("sp_AddShuaCount", dt);
+
+                    cmd.CommandText = "sp_AddShuaCount";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@person", person);
+                    cmd.Parameters.AddWithValue("@today", DateTime.Now.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@updatetime", DateTime.Now.ToString("yyyy-MM-dd HH:mm:dd"));
+
+                    cmd.ExecuteNonQuery();
+
+                    //Log.Write("结束" + DateTime.Now.ToString(), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "test");
+
+                    return AdInfoList;
                 }
 
-                Dictionary<string, string> dt = new Dictionary<string, string>();
-                dt.Add("@person", person);
-                dt.Add("@today", DateTime.Now.ToString("yyyy-MM-dd"));
-                dt.Add("@updatetime", DateTime.Now.ToString("yyyy-MM-dd HH:mm:dd"));
-
-                SqlHelper.Instance.ExecuteProcedure("sp_AddShuaCount", dt);
-
-
-                return AdInfoList;
             }
             catch (Exception ex)
             {
@@ -603,7 +638,7 @@ namespace Controller
             }
         }
 
-        public void UpdateAccountStateAndUserName(string account, string state,string userName)
+        public void UpdateAccountStateAndUserName(string account, string state, string userName)
         {
             try
             {
@@ -611,7 +646,7 @@ namespace Controller
                 if (state == "tubevia")
                 {
                     sqlCmdUpdate = string.Format("UPDATE [dbo].[Accounts] SET [State] = '{0}',[UpdateTime] = '{1}',[BindingTime] = '{2}',[UserName]='{4}' WHERE [Account]= '{3}' ",
-                                           state, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), account,userName);
+                                           state, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), account, userName);
                 }
                 else if (state == "die")
                 {
@@ -722,7 +757,7 @@ namespace Controller
             }
         }
 
-        public void InsertAccount(AccountInfo accountInfo,string ip = "0.0.0.0")
+        public void InsertAccount(AccountInfo accountInfo, string ip = "0.0.0.0", string computerName = "")
         {
             try
             {
@@ -733,8 +768,8 @@ namespace Controller
                     throw new Exception(string.Format("{0} has been is DB!", accountInfo.Account));
                 }
 
-                string sqlCmdInsert = string.Format("INSERT INTO [dbo].[Accounts] ([Account],[Password],[UserName],[Country],[State],[Group],[PhoneType],[UpdateTime],[AddTime],[ShouDongGroupDone],[IP]) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}')",
-                    accountInfo.Account, accountInfo.Password, accountInfo.UserName, accountInfo.Country, accountInfo.State, accountInfo.Group, accountInfo.PhoneType, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), "0",ip);
+                string sqlCmdInsert = string.Format("INSERT INTO [dbo].[Accounts] ([Account],[Password],[UserName],[Country],[State],[Group],[PhoneType],[UpdateTime],[AddTime],[ShouDongGroupDone],[IP],[Computername]) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}')",
+                    accountInfo.Account, accountInfo.Password, accountInfo.UserName, accountInfo.Country, accountInfo.State, accountInfo.Group, accountInfo.PhoneType, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), "0", ip, computerName);
                 SqlHelper.Instance.ExecuteCommand(sqlCmdInsert);
             }
             catch (Exception ex)

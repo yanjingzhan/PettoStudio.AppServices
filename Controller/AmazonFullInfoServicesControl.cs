@@ -11,14 +11,14 @@ namespace Controller
 {
     public class AmazonFullInfoServicesControl
     {
-        public AmazonFullInfoServicesModel GetAmazonFullInfo(string newStateAfterUse="已使用")
+        public AmazonFullInfoServicesModel GetAmazonFullInfo(string newStateAfterUse = "normal")
         {
             //newStateAfterUse = string.IsNullOrEmpty(newStateAfterUse) ? "已使用" : newStateAfterUse;
 
             //test
-            newStateAfterUse = "可用";
+            newStateAfterUse = "normal";
 
-            string sqlCmd = string.Format("select * from [dbo].[AmazonFullInfo] a,[dbo].[AndroidDeviceInfo] b where  a.[State]='可用' AND a.[AndroidDeviceInfoID]=b.[ID]");
+            string sqlCmd = string.Format("select TOP 1 * from [dbo].[AmazonFullInfo] a,[dbo].[AndroidDeviceInfo] b where  a.[State]='normal' AND a.[AndroidDeviceInfoID]=b.[ID] order by a.[UpdateTime]");
 
             DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
 
@@ -65,11 +65,30 @@ namespace Controller
             };
 
             sqlCmd = string.Format("UPDATE [dbo].[AmazonFullInfo] SET [State] = '{0}',[UpdateTime] = '{1}' WHERE [ID] = {2}",
-                                 newStateAfterUse,DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), info_t.ID);
+                                 newStateAfterUse, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), info_t.ID);
 
             SqlHelper.Instance.ExecuteCommand(sqlCmd);
 
             return info_t;
+        }
+
+        public void UpdateAccountState(string account, string state)
+        {
+            try
+            {
+                string sqlCmd = string.Format("UPDATE [dbo].[AmazonFullInfo] SET [State] = '{0}',[UpdateTime] = '{1}' WHERE [AmazonAccount] = '{2}'",
+                                                state,DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), account);
+
+                DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                SqlHelper.Instance.ExecuteCommand(sqlCmd);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

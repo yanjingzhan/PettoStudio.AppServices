@@ -7,12 +7,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F53203EF-790C-4552-81B6-DD1605440EB6}</ProjectGuid>
+    <ProjectGuid>{025BBA7D-0353-47B5-BB4A-5E55A6DC6112}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PettoStudio.AppServices</RootNamespace>
-    <AssemblyName>PettoStudio.AppServices</AssemblyName>
+    <RootNamespace>IOSFullInfoServices</RootNamespace>
+    <AssemblyName>IOSFullInfoServices</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -53,46 +53,35 @@
     <Reference Include="System.Web.Mobile" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="adcontrol.aspx" />
-    <Content Include="apprecommendapp.aspx" />
-    <Content Include="IP.aspx" />
+    <Content Include="AccountInfo.aspx" />
+    <Content Include="IAPServices.aspx" />
     <Content Include="Scripts\jquery-1.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="adcontrol.aspx.cs">
-      <DependentUpon>adcontrol.aspx</DependentUpon>
+    <Compile Include="AccountInfo.aspx.cs">
+      <DependentUpon>AccountInfo.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="adcontrol.aspx.designer.cs">
-      <DependentUpon>adcontrol.aspx</DependentUpon>
+    <Compile Include="AccountInfo.aspx.designer.cs">
+      <DependentUpon>AccountInfo.aspx</DependentUpon>
     </Compile>
-    <Compile Include="apprecommendapp.aspx.cs">
-      <DependentUpon>apprecommendapp.aspx</DependentUpon>
+    <Compile Include="IAPServices.aspx.cs">
+      <DependentUpon>IAPServices.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="apprecommendapp.aspx.designer.cs">
-      <DependentUpon>apprecommendapp.aspx</DependentUpon>
+    <Compile Include="IAPServices.aspx.designer.cs">
+      <DependentUpon>IAPServices.aspx</DependentUpon>
     </Compile>
-    <Compile Include="IP.aspx.cs">
-      <DependentUpon>IP.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="IP.aspx.designer.cs">
-      <DependentUpon>IP.aspx</DependentUpon>
-    </Compile>
+    <Compile Include="LogWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\LogWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\Web.config.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -128,9 +117,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>5714</DevelopmentServerPort>
+          <DevelopmentServerPort>43332</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:5696/</IISUrl>
+          <IISUrl>http://localhost:43332/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

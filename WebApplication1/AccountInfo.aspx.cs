@@ -72,7 +72,8 @@ namespace AmazonFullInfoServices
                     data.PhoneCardStatus, data.MacAddress, data.WIFIName, data.WIFIAddress, data.OSVersion, data.OSVersionValue, data.OSStructure, data.ScreenResolution, data.FirmwareVersion, data.Brand, data.Model, data.ProductName,
                     data.OEM, data.CPUModel, data.Hardware, data.AmazonAccount, data.AmazonPassword, data.VPNAccount, data.VPNPassword, data.IP,
                     //test
-                    "candy workshop"
+                    //"need speed car"
+                    "racing"
                     );
 
                 Response.Write(result);

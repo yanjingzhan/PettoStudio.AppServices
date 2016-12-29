@@ -219,9 +219,16 @@ namespace Controller
                     sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] ='binding' AND [Country]='{1}' AND [ShouDongGroupDone]<{2} AND ([UserName]='{3}' OR [UserName]='{3}.d') ORDER BY [ID] DESC",
                                   accountCount.ToString(), country_t, currentGroupNumber, userName);
 
+                    //用username区分手机版本。1为wp8，7为wp7（库中的username依然为1）
                     if (userName == "1")
                     {
                         sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] !='die' AND [ShouDongGroupDone]<{2} AND ([UserName]='{3}' OR [UserName]='{3}.d') ORDER BY [ID] DESC",
+                                  accountCount.ToString(), country, currentGroupNumber, userName);
+                    }
+
+                    if (userName == "7")
+                    {
+                        sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [State] ='xboxed' AND [ShouDongGroupDone]<{2} AND ([UserName]='1' OR [UserName]='1.d') ORDER BY [ID] DESC",
                                   accountCount.ToString(), country, currentGroupNumber, userName);
                     }
 
@@ -231,6 +238,7 @@ namespace Controller
                     da.SelectCommand.Parameters.AddWithValue("@currentGroupNumber", currentGroupNumber);
                     da.SelectCommand.Parameters.AddWithValue("@userName", userName);
                     da.SelectCommand.Parameters.AddWithValue("@updateTime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                    da.SelectCommand.Parameters.AddWithValue("@country", country);
 
                     DataTable accountInfoTable = new DataTable();
                     da.Fill(accountInfoTable);

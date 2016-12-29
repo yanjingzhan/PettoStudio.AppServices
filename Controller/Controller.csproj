@@ -43,6 +43,8 @@
     <Compile Include="AmazonFullInfoServicesControl.cs" />
     <Compile Include="AndroidPushGameInfoControl.cs" />
     <Compile Include="DreamSparkerControl.cs" />
+    <Compile Include="IOSFullInfoServicesControl.cs" />
+    <Compile Include="IOSIAPServicesControl.cs" />
     <Compile Include="PlayControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PushGameInfoControl.cs" />
@@ -50,6 +52,7 @@
     <Compile Include="RecommendGamesControl.cs" />
     <Compile Include="ShuaControl.cs" />
     <Compile Include="UnityGameControl.cs" />
+    <Compile Include="VerifyEmailControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataBaseLib\DataBaseLib.csproj">

@@ -1,0 +1,1 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="emailcontrol.aspx.cs" Inherits="VerifyEmailServices.emailcontrol" %>

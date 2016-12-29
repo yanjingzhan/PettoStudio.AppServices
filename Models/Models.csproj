@@ -55,6 +55,8 @@
     <Compile Include="In\AdsGetter.cs" />
     <Compile Include="In\PostAdData.cs" />
     <Compile Include="In\RecommendAppGetter.cs" />
+    <Compile Include="IOSFullInfoServices\AppleAccountFullInfo.cs" />
+    <Compile Include="IOSFullInfoServices\AppleIAPRecord.cs" />
     <Compile Include="Out\AdInfo.cs" />
     <Compile Include="Out\RecommendAppModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

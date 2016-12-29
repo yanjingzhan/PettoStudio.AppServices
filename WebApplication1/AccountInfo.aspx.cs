@@ -16,11 +16,13 @@ namespace AmazonFullInfoServices
         {
             if (!IsPostBack)
             {
-                string action, newStateAfterUse, state, account;
+                string action, newStateAfterUse, state, account, country, gamename;
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 newStateAfterUse = Request["newstateafteruse"] == null ? "" : Request["newstateafteruse"].Trim();
                 state = Request["state"] == null ? "" : Request["state"].Trim();
                 account = Request["account"] == null ? "" : Request["account"].Trim();
+                country = Request["country"] == null ? "" : Request["country"].Trim();
+                gamename = Request["gamename"] == null ? "" : Request["gamename"].Trim();
 
                 switch (action.ToLower())
                 {
@@ -35,6 +37,11 @@ namespace AmazonFullInfoServices
                     case "updateaccountstate":
                         UpdateAccountState(account, state);
                         break;
+
+                    case "addshuacount":
+                        AddShuaCount(country, gamename);
+                        break;
+
 
                     default:
                         Response.Write("-100:action is error!");
@@ -102,5 +109,22 @@ namespace AmazonFullInfoServices
                 LogWriter.WriteLog(ex.Message, Page, "UpdateAccountState");
             }
         }
+
+        public void AddShuaCount(string country, string gameName)
+        {
+            try
+            {
+                new AmazonFullInfoServicesControl().AddShuaCount(country, gameName);
+
+                Response.Write("200:ok");
+                LogWriter.WriteLog("200:ok", Page, "AddShuaCount");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "AddShuaCount");
+            }
+        }
+
     }
 }

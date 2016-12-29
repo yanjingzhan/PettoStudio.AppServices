@@ -90,5 +90,34 @@ namespace Controller
                 throw;
             }
         }
+
+        public void AddShuaCount(string country,string gameName)
+        {
+            try
+            {
+                string sqlCmd = string.Format("SELECT COUNT(*) FROM [dbo].[ShuaRecord] WHERE [Date]='{0}' AND [Country]='{1}' AND [GameName]='{2}'",
+                                                                   DateTime.Now.Date.ToString("yyyy/MM/dd"), country,gameName);
+
+                string sqlCmdAddRecord = string.Format("INSERT INTO [dbo].[ShuaRecord] ([Date],[ShuaSucCount],[ShuaFailCount],[Country],[UpdateTime],[GameName]) VALUES ('{0}',{1},{2},'{3}','{4}','{5}')",
+                                                    DateTime.Now.Date.ToString("yyyy/MM/dd"), "1", "0", country, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),gameName);
+
+
+                var c = SqlHelper.Instance.ExecuteScalar(sqlCmd);
+                if(c != null && c.ToString() != "0")
+                {
+                    sqlCmdAddRecord = string.Format("Update [dbo].[ShuaRecord] SET [ShuaSucCount]=[ShuaSucCount]+{0},[ShuaFailCount]=[ShuaFailCount]+{1},[UpdateTime]='{2}' WHERE [Date]='{3}'AND [Country]='{4}' AND [GameName]='{5}'",
+                                                   "1", "0", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), DateTime.Now.Date.ToString("yyyy/MM/dd"), country,gameName);
+                    
+                }
+
+                SqlHelper.Instance.ExecuteCommand(sqlCmdAddRecord);
+
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+        }
     }
 }

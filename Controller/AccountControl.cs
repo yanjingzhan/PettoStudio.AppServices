@@ -421,6 +421,85 @@ namespace Controller
         }
 
 
+        public List<AccountInfo> GetAccountListByIOSStateAndRefreshState(int count, string iosState, string newIOSState)
+        {
+            try
+            {
+                List<AccountInfo> AdInfoList = new List<AccountInfo>();
+
+                string sqlCmd = string.Empty;
+                if (string.IsNullOrEmpty(iosState) || iosState.ToLower() == "null")
+                {
+                    sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [IOSState] is NULL ORDER BY [ID] DESC",
+                                                 count.ToString());
+                }
+                else
+                {
+
+                    sqlCmd = string.Format("SELECT TOP {0} * FROM [dbo].[Accounts] WHERE [IOSState] ='{1}' ORDER BY [ID] DESC",
+                                                     count.ToString(), iosState);
+                }
+
+                DataTable accountInfoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (accountInfoTable == null || accountInfoTable.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+                for (int i = 0; i < accountInfoTable.Rows.Count; i++)
+                {
+                    AccountInfo accountInfo_t = new AccountInfo
+                    {
+                        Account = accountInfoTable.Rows[i]["Account"].ToString(),
+                        Password = accountInfoTable.Rows[i]["Password"].ToString(),
+                        UserName = accountInfoTable.Rows[i]["UserName"].ToString(),
+                        Country = accountInfoTable.Rows[i]["Country"].ToString(),
+                        State = accountInfoTable.Rows[i]["State"].ToString(),
+                        PhoneType = accountInfoTable.Rows[i]["PhoneType"].ToString(),
+                        Group = accountInfoTable.Rows[i]["Group"].ToString(),
+                        UpdateTime = accountInfoTable.Rows[i]["UpdateTime"].ToString(),
+                        BindingTime = accountInfoTable.Rows[i]["BindingTime"].ToString()
+                    };
+
+                    AdInfoList.Add(accountInfo_t);
+                }
+
+                if (AdInfoList.Count > 0)
+                {
+                    foreach (var ai in AdInfoList)
+                    {
+                        string sql_t = string.Format("UPDATE [dbo].[Accounts] SET [IOSState]= '{0}' WHERE [Account] = '{1}'",
+                                                    newIOSState, ai.Account);
+                        SqlHelper.Instance.ExecuteScalar(sql_t);
+                    }
+                }
+
+                return AdInfoList;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
+                return null;
+            }
+        }
+
+        public void UpdateIOSStateByAccount(string account, string iosState)
+        {
+            try
+            {
+                string sqlCmdUpdate = string.Format("UPDATE [dbo].[Accounts] SET [IOSState] = '{0}',[UpdateTime] = '{1}' WHERE [Account]= '{2}' ",
+                                           iosState, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), account);
+
+                SqlHelper.Instance.ExecuteCommand(sqlCmdUpdate);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
+                throw ex;
+            }
+        }
+
         public List<AccountInfo> GetAccountListByStateCountryAndRefreshState(int count, string country, string state, string newState)
         {
             try

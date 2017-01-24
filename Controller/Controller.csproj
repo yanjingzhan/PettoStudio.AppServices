@@ -41,6 +41,7 @@
     <Compile Include="AccountControl.cs" />
     <Compile Include="AdsControl.cs" />
     <Compile Include="AmazonFullInfoServicesControl.cs" />
+    <Compile Include="AndroidFullInfoServicesControl.cs" />
     <Compile Include="AndroidPushGameInfoControl.cs" />
     <Compile Include="DreamSparkerControl.cs" />
     <Compile Include="IOSFullInfoServicesControl.cs" />

@@ -42,6 +42,7 @@
     <Compile Include="AccountServices\AppModel.cs" />
     <Compile Include="AccountServices\CountryGroupInfo.cs" />
     <Compile Include="AmazonFullInfoServices\AmazonFullInfoServicesModel.cs" />
+    <Compile Include="AndroidFullInfoServices\AndroidInfo.cs" />
     <Compile Include="DreamSparkerModel.cs" />
     <Compile Include="GameManager\AndroidPushGameInfoModel.cs" />
     <Compile Include="GameManager\AppInfoTempModel.cs" />
@@ -57,6 +58,8 @@
     <Compile Include="In\RecommendAppGetter.cs" />
     <Compile Include="IOSFullInfoServices\AppleAccountFullInfo.cs" />
     <Compile Include="IOSFullInfoServices\AppleIAPRecord.cs" />
+    <Compile Include="IOSFullInfoServices\ApplePersonInfo.cs" />
+    <Compile Include="IOSFullInfoServices\IAPRecordItemModel.cs" />
     <Compile Include="Out\AdInfo.cs" />
     <Compile Include="Out\RecommendAppModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

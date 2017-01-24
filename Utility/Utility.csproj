@@ -51,6 +51,7 @@
     <Compile Include="CharsHelper.cs" />
     <Compile Include="CmdHelper.cs" />
     <Compile Include="Encryption.cs" />
+    <Compile Include="INIHelper.cs" />
     <Compile Include="JsonHelper.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MailHelper.cs" />

@@ -17,7 +17,7 @@ namespace AccountServices
         {
             if (!IsPostBack)
             {
-                string action, account, password, username, country, group, state, phonetype, accountcount, addTime, count, newstate, person,computername;
+                string action, account, password, username, country, group, state, phonetype, accountcount, addTime, count, newstate, person, computername, iosstate, newiosstate;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 account = Request["account"] == null ? "" : Request["account"].Trim();
@@ -33,6 +33,8 @@ namespace AccountServices
                 newstate = Request["newstate"] == null ? "" : Request["newstate"].Trim();
                 person = Request["person"] == null ? "" : Request["person"].Trim();
                 computername = Request["computername"] == null ? "" : Request["computername"].Trim();
+                iosstate = Request["iosstate"] == null ? "" : Request["iosstate"].Trim();
+                newiosstate = Request["newiosstate"] == null ? "" : Request["newiosstate"].Trim();
 
 
                 switch (action.ToLower())
@@ -104,10 +106,34 @@ namespace AccountServices
                         GetAccountInfoListForShuaJi(accountcount);
                         break;
 
+                    case "getaccountlistbyiosstateandrefreshstate":
+                        GetAccountListByIOSStateAndRefreshState(count, iosstate, newiosstate);
+                        break;
+
+                    case "updateiosstatebyaccount":
+                        UpdateIOSStateByAccount(account, iosstate);
+                        break;
+
                     default:
                         Response.Write("-100:action is error!");
                         break;
                 }
+            }
+        }
+
+        private void UpdateIOSStateByAccount(string account, string iosState)
+        {
+            try
+            {
+                new AccountControl().UpdateIOSStateByAccount(account, iosState);
+
+                Response.Write("200:ok");
+                LogWriter.WriteLog("200:ok", Page, "UpdateIOSStateByAccount");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "UpdateIOSStateByAccount");
             }
         }
 
@@ -142,6 +168,23 @@ namespace AccountServices
             {
                 Response.Write(ex.Message);
                 LogWriter.WriteLog(ex.Message, Page, "GetAccountListByStateAndRefreshState");
+            }
+        }
+
+        public void GetAccountListByIOSStateAndRefreshState(string count, string iosState, string newIOSState)
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(
+                    new AccountControl().GetAccountListByIOSStateAndRefreshState(int.Parse(count), iosState, newIOSState));
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetAccountListByIOSStateAndRefreshState");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetAccountListByIOSStateAndRefreshState");
             }
         }
         public void CheckAccount(string accountCount)
@@ -400,7 +443,7 @@ namespace AccountServices
             }
         }
 
-        private void InsertAccount(string username, string account, string password, string country, string group, string state, string phonetype,string computername)
+        private void InsertAccount(string username, string account, string password, string country, string group, string state, string phonetype, string computername)
         {
             try
             {
@@ -415,7 +458,7 @@ namespace AccountServices
                         PhoneType = phonetype,
                         State = state,
                         UserName = username
-                    }, IP,computername
+                    }, IP, computername
                     );
 
                 Response.Write("200:ok");

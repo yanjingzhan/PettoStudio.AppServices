@@ -1,0 +1,1 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="DevicesInfo.aspx.cs" Inherits="AndroidFullInfoServices.DevicesInfo" %>

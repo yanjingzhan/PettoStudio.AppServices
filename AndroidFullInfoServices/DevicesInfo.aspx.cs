@@ -29,12 +29,17 @@ namespace AndroidFullInfoServices
                     case "androidinfo":
                         AndroidInfo(networkOperator, language, timeZone);
                         break;
+
+                    case "getisrequestad":
+                        GetIsRequestAd();
+                        break;
+
                     default:
                         Response.Write("-100:action is error!");
                         break;
                 }
             }
-        }
+        }   
 
         private void AndroidInfo(string networkOperator, string language, string timeZone)
         {
@@ -50,6 +55,22 @@ namespace AndroidFullInfoServices
             {
                 Response.Write(ex.Message);
                 LogWriter.WriteLog(ex.Message, Page, "androidinfo");
+            }
+        }
+
+        private void GetIsRequestAd()
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(new AndroidFullInfoServicesControl().GetIsRequestAd());
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetIsRequestAd");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetIsRequestAd");
             }
         }
     }

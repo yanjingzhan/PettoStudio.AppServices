@@ -119,6 +119,12 @@ namespace Controller
             }
         }
 
+        public bool GetIsRequestAd()
+        {
+            int limitAlow = int.Parse(INIHelper.ReadIniData("conf", "LimitAlow", "5", AppDomain.CurrentDomain.BaseDirectory + "config.ini"));
+            return limitAlow > _rd.Next(10);
+        }
+
         public string CreateAnrdoidDeviceID()
         {
             StringBuilder sb = new StringBuilder();

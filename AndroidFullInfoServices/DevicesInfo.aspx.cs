@@ -17,12 +17,13 @@ namespace AndroidFullInfoServices
         {
             if (!IsPostBack)
             {
-                string action, networkOperator, language, timeZone;
+                string action, networkOperator, language, timeZone,log;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 networkOperator = Request["networkoperator"] == null ? "" : Request["networkoperator"].Trim();
                 language = Request["language"] == null ? "" : Request["language"].Trim();
                 timeZone = Request["timezone"] == null ? "" : Request["timezone"].Trim();
+                log = Request["log"] == null ? "" : Request["log"].Trim();
 
                 switch (action.ToLower())
                 {
@@ -34,12 +35,30 @@ namespace AndroidFullInfoServices
                         GetIsRequestAd();
                         break;
 
+                    case "reportlog":
+                        ReportLog(log);
+                        break;
+
                     default:
                         Response.Write("-100:action is error!");
                         break;
                 }
             }
         }   
+
+        private void ReportLog(string log)
+        {
+            try
+            {
+                LogWriter.WriteLog("200:ok", Page, "ReportLog");
+                Response.Write("200:ok");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "ReportLog");
+            }
+        }
 
         private void AndroidInfo(string networkOperator, string language, string timeZone)
         {

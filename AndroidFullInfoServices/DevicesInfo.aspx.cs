@@ -17,22 +17,46 @@ namespace AndroidFullInfoServices
         {
             if (!IsPostBack)
             {
-                string action, networkOperator, language, timeZone;
+                string action, networkOperator, language, timeZone,log;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 networkOperator = Request["networkoperator"] == null ? "" : Request["networkoperator"].Trim();
                 language = Request["language"] == null ? "" : Request["language"].Trim();
                 timeZone = Request["timezone"] == null ? "" : Request["timezone"].Trim();
+                log = Request["log"] == null ? "" : Request["log"].Trim();
 
                 switch (action.ToLower())
                 {
                     case "androidinfo":
                         AndroidInfo(networkOperator, language, timeZone);
                         break;
+
+                    case "getisrequestad":
+                        GetIsRequestAd();
+                        break;
+
+                    case "reportlog":
+                        ReportLog(log);
+                        break;
+
                     default:
                         Response.Write("-100:action is error!");
                         break;
                 }
+            }
+        }   
+
+        private void ReportLog(string log)
+        {
+            try
+            {
+                LogWriter.WriteLog("200:ok", Page, "ReportLog");
+                Response.Write("200:ok");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "ReportLog");
             }
         }
 
@@ -50,6 +74,22 @@ namespace AndroidFullInfoServices
             {
                 Response.Write(ex.Message);
                 LogWriter.WriteLog(ex.Message, Page, "androidinfo");
+            }
+        }
+
+        private void GetIsRequestAd()
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(new AndroidFullInfoServicesControl().GetIsRequestAd());
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetIsRequestAd");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetIsRequestAd");
             }
         }
     }

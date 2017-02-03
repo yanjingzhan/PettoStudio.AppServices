@@ -62,8 +62,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DevicesInfo.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>DevicesInfo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="DevicesInfo.aspx.designer.cs">
       <DependentUpon>DevicesInfo.aspx</DependentUpon>

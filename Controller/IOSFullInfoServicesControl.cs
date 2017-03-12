@@ -61,7 +61,7 @@ namespace Controller
 
         public AppleAccountFullInfo GetAppleAccountFullInfoByState(string state)
         {
-            string sqlCmd = string.Format("select TOP 1 * from [dbo].[AppleAccountFullInfo] a,[dbo].[ApplePersonInfo] b where  a.[State]='{0}' AND a.[ApplePersonInfoID]=b.[ID] order by a.[UpdateTime]", state);
+            string sqlCmd = string.Format("select TOP 1 * from [dbo].[AppleAccountFullInfo] a,[dbo].[ApplePersonInfo] b where  a.[State]='{0}' AND a.[ApplePersonInfoID]=b.[ID] order by a.[GetTime], a.[UpdateTime] DESC", state);
 
             DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
 
@@ -98,15 +98,16 @@ namespace Controller
                 Country = infoTable.Rows[0]["Country"].ToString(),
             };
 
-            sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [State] = '{0}',[UpdateTime] = '{1}' WHERE [ID] = {2}",
-                               state, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), t.ID);
+            sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [State] = '{0}',[UpdateTime] = '{1}',[GetTime] = '{2}' WHERE [ID] = {3}",
+                               state, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), t.ID);
 
             SqlHelper.Instance.ExecuteCommand(sqlCmd);
 
             return t;
         }
 
-        public AppleAccountFullInfo GetAppleAccountFullInfoAndRefreshStateByState(string state,string newState)
+
+        public AppleAccountFullInfo GetAppleAccountFullInfoAndRefreshStateByState(string state, string newState)
         {
             string sqlCmd = string.Format("select TOP 1 * from [dbo].[AppleAccountFullInfo] a,[dbo].[ApplePersonInfo] b where a.[State]='{0}' AND a.[ApplePersonInfoID]=b.[ID] order by a.[UpdateTime]", state);
 
@@ -172,11 +173,13 @@ namespace Controller
             }
         }
 
-        public ApplePersonInfo GetApplePersonInfoAndRefreshState(string state, string newState)
+        public ApplePersonInfo GetApplePersonInfoAndRefreshState(string state, string newState, string country)
         {
             try
             {
-                string sqlCmd = string.Format("SELECT TOP 1 * from [dbo].[ApplePersonInfo] WHERE [State] = '{0}' ORDER BY [ID]", state);
+                country = string.IsNullOrEmpty(country) ? "US" : country;
+
+                string sqlCmd = string.Format("SELECT TOP 1 * from [dbo].[ApplePersonInfo] WHERE [State] = '{0}' AND [Country] = '{1}' ORDER BY [ID]", state, country);
 
                 DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
 
@@ -188,8 +191,8 @@ namespace Controller
                 ApplePersonInfo t = new ApplePersonInfo
                 {
                     ID = infoTable.Rows[0][0].ToString(),
-                    FirstName = CharsHelper.ConvertToPinYin(infoTable.Rows[0]["FirstName"].ToString()),
-                    SecondName = CharsHelper.ConvertToPinYin(infoTable.Rows[0]["SecondName"].ToString()),
+                    FirstName = country.ToLower() == "china" ? infoTable.Rows[0]["FirstName"].ToString() : CharsHelper.ConvertToPinYin(infoTable.Rows[0]["FirstName"].ToString()),
+                    SecondName = country.ToLower() == "china" ? infoTable.Rows[0]["SecondName"].ToString() : CharsHelper.ConvertToPinYin(infoTable.Rows[0]["SecondName"].ToString()),
                     Address = infoTable.Rows[0]["Address"].ToString(),
                     City = infoTable.Rows[0]["City"].ToString(),
                     Province = infoTable.Rows[0]["Province"].ToString(),
@@ -266,6 +269,157 @@ namespace Controller
             }
             catch
             {
+                throw;
+            }
+        }
+
+        public AppleAccountFullInfo GetAppAccountByChangeCountryState(string country, string newCountry, string state, string oldChangeCountryState, string newChangeCountryState)
+        {
+            ApplePersonInfo personInfo = GetApplePersonInfoAndRefreshState("tobebinding", "binding", newCountry);
+
+            string sqlCmd = string.Format("select TOP 1 * from [dbo].[AppleAccountFullInfo] WHERE [State] = '{0}' AND [ChangeCountryState] = '{1}' AND [Country] = '{2}' order by [ID] DESC",
+                state, oldChangeCountryState, country);
+
+
+            if (string.IsNullOrEmpty(oldChangeCountryState) || oldChangeCountryState.ToLower() == "null")
+            {
+                sqlCmd = string.Format("select TOP 1 * from [dbo].[AppleAccountFullInfo] WHERE [State] = '{0}' AND [ChangeCountryState] is null AND [Country] = '{1}' order by [ID] DESC",
+                state, country);
+            }
+
+            DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+            if (infoTable == null || infoTable.Rows.Count == 0)
+            {
+                throw new Exception("无数据");
+            }
+
+            AppleAccountFullInfo t = new AppleAccountFullInfo
+            {
+                ID = infoTable.Rows[0][0].ToString(),
+                AppleAccount = infoTable.Rows[0]["AppleAccount"].ToString(),
+                ApplePassword = infoTable.Rows[0]["ApplePassword"].ToString(),
+                VPNAccount = infoTable.Rows[0]["VPNAccount"].ToString(),
+                VPNPassword = infoTable.Rows[0]["VPNPassword"].ToString(),
+                IP = infoTable.Rows[0]["IP"].ToString(),
+                VerifyMail = infoTable.Rows[0]["VerifyMail"].ToString(),
+                VerifyPassword = infoTable.Rows[0]["VerifyPassword"].ToString(),
+                FirstQuestion = infoTable.Rows[0]["FirstQuestion"].ToString(),
+                FirstAnswer = infoTable.Rows[0]["FirstAnswer"].ToString(),
+                SecondQuestion = infoTable.Rows[0]["SecondQuestion"].ToString(),
+                SecondAnswer = infoTable.Rows[0]["SecondAnswer"].ToString(),
+                ThirdQuestion = infoTable.Rows[0]["ThirdQuestion"].ToString(),
+                ThirdAnswer = infoTable.Rows[0]["ThirdAnswer"].ToString(),
+                FirstName = CharsHelper.ConvertToPinYin(infoTable.Rows[0]["FirstName"].ToString()),
+                SecondName = CharsHelper.ConvertToPinYin(infoTable.Rows[0]["SecondName"].ToString()),
+                Birthday = infoTable.Rows[0]["Birthday"].ToString(),
+                Country = infoTable.Rows[0]["Country"].ToString(),
+                ApplePersonInfoID = personInfo.ID,
+                Address = personInfo.Address,
+                City = personInfo.City,
+                PhoneNumber1 = personInfo.PhoneNumber1,
+                PhoneNumber2 = personInfo.PhoneNumber2,
+                Province = personInfo.Province,
+                ZipCode = personInfo.ZipCode
+            };
+
+            sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [ChangeCountryState] = '{0}' WHERE [ID] = {1}",
+                               newChangeCountryState, t.ID);
+
+            SqlHelper.Instance.ExecuteCommand(sqlCmd);
+
+            return t;
+        }
+
+        public void UpdateCountryAndChangeCountryStateByID(string country, string changeCountryState, string applePersonInfoID, string id)
+        {
+            try
+            {
+                string sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [Country] = '{0}',[ChangeCountryState] = '{1}',[ApplePersonInfoID] = '{2}'  WHERE [ID] = '{3}'",
+                                                country, changeCountryState, applePersonInfoID, id);
+
+                if (string.IsNullOrEmpty(applePersonInfoID) || applePersonInfoID.ToLower() == "null" || applePersonInfoID.ToLower() == "-1")
+                {
+                    sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [Country] = '{0}',[ChangeCountryState] = '{1}'  WHERE [ID] = '{2}'",
+                                                country, changeCountryState, id);
+                }
+
+                DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                SqlHelper.Instance.ExecuteCommand(sqlCmd);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public AppleAccountFullInfo GetAppAccountByCountryAndShuaVungleState(string country, string state, string oldShuaVungleState, string newShuaVungleState)
+        {
+            string sqlCmd = string.Format("select TOP 1 * from [dbo].[AppleAccountFullInfo] WHERE [State] = '{0}' AND [ShuaVungleState] = '{1}' AND [Country] = '{2}' order by [ID] DESC",
+                state, oldShuaVungleState, country);
+
+
+            if (string.IsNullOrEmpty(oldShuaVungleState) || oldShuaVungleState.ToLower() == "null")
+            {
+                sqlCmd = string.Format("select TOP 1 * from [dbo].[AppleAccountFullInfo] WHERE [State] = '{0}' AND [ShuaVungleState] is null AND [Country] = '{1}' order by [ID] DESC",
+                state, country);
+            }
+
+            DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+            if (infoTable == null || infoTable.Rows.Count == 0)
+            {
+                throw new Exception("无数据");
+            }
+
+            AppleAccountFullInfo t = new AppleAccountFullInfo
+            {
+                ID = infoTable.Rows[0][0].ToString(),
+                AppleAccount = infoTable.Rows[0]["AppleAccount"].ToString(),
+                ApplePassword = infoTable.Rows[0]["ApplePassword"].ToString(),
+                VPNAccount = infoTable.Rows[0]["VPNAccount"].ToString(),
+                VPNPassword = infoTable.Rows[0]["VPNPassword"].ToString(),
+                IP = infoTable.Rows[0]["IP"].ToString(),
+                VerifyMail = infoTable.Rows[0]["VerifyMail"].ToString(),
+                VerifyPassword = infoTable.Rows[0]["VerifyPassword"].ToString(),
+                FirstQuestion = infoTable.Rows[0]["FirstQuestion"].ToString(),
+                FirstAnswer = infoTable.Rows[0]["FirstAnswer"].ToString(),
+                SecondQuestion = infoTable.Rows[0]["SecondQuestion"].ToString(),
+                SecondAnswer = infoTable.Rows[0]["SecondAnswer"].ToString(),
+                ThirdQuestion = infoTable.Rows[0]["ThirdQuestion"].ToString(),
+                ThirdAnswer = infoTable.Rows[0]["ThirdAnswer"].ToString(),
+                FirstName = CharsHelper.ConvertToPinYin(infoTable.Rows[0]["FirstName"].ToString()),
+                SecondName = CharsHelper.ConvertToPinYin(infoTable.Rows[0]["SecondName"].ToString()),
+                Birthday = infoTable.Rows[0]["Birthday"].ToString(),
+                Country = infoTable.Rows[0]["Country"].ToString(),
+            };
+
+            sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [ShuaVungleState] = '{0}' WHERE [ID] = {1}",
+                               newShuaVungleState, t.ID);
+
+            SqlHelper.Instance.ExecuteCommand(sqlCmd);
+
+            return t;
+        }
+
+        public void UpdateShuaVungleStateByID(string shuaVungleState, string id)
+        {
+            try
+            {
+                string sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [ShuaVungleState] = '{0}' WHERE [ID] = '{1}'",
+                                                shuaVungleState, id);
+
+                DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                SqlHelper.Instance.ExecuteCommand(sqlCmd);
+
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }

@@ -32,6 +32,8 @@ namespace Controller
         private static List<double> _iosVersionDouble = new List<double>();
         private static List<string> _iosVersionStr = new List<string>();
 
+        private static Dictionary<string,string> _iosLanguageDic = new Dictionary<string,string>();
+
         static AndroidFullInfoServicesControl()
         {
             using (StreamReader sr = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "uaServer.txt"))
@@ -101,6 +103,21 @@ namespace Controller
 
             _iosDeviceInfoModelList = JsonHelper.DeserializeObjectFromJsonFile<List<IOSDeviceInfoModel>>(AppDomain.CurrentDomain.BaseDirectory + "DevicesList_iphone.json");
 
+            using (StreamReader sr = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "iosLanguage.txt"))
+            {
+                string line = string.Empty;
+
+                while ((line = sr.ReadLine()) != null)
+                {
+                    string[] shits = line.Split('|');
+
+                    if (shits.Length > 1)
+                    {
+                        _iosLanguageDic.Add(shits[0].Trim(),shits[1].Trim());
+                    }
+                }
+            }
+
             #endregion
         }
 
@@ -169,6 +186,8 @@ namespace Controller
                     androidInfo.IsIFA = true;
                     androidInfo.IFA = androidInfo.IFA.ToUpper();
                     androidInfo.Isu = androidInfo.IFA;
+
+                    androidInfo.LanguageIOS = _iosLanguageDic.ContainsKey(language.ToLower()) ? _iosLanguageDic[language.ToLower()] : language;
                 }
 
                 return androidInfo;
@@ -259,7 +278,5 @@ namespace Controller
 
             return null;
         }
-
-
     }
 }

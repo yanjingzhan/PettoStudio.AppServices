@@ -34,6 +34,8 @@ namespace Models.AndroidFullInfoServices
 
         public bool IsContinuousRequest;
         public bool IsCPM;
+
+        public string LanguageIOS;
     }
 
     public class AndroidAdWeightModel

@@ -12,6 +12,12 @@ namespace TestControl
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("asdasd".Split('|').Length);
+            Console.WriteLine("|asdasd".Split('|').Length);
+            Console.WriteLine("asdasd|".Split('|').Length);
+
+            Console.ReadKey();
+
             string sqlCmd_Update = string.Format("UPDATE [dbo].[AndroidPushGameInfo] SET [State]='开发中',[BaiDuDevAccounts]='{0}',[BaiduStoreDevPassword]='{1}',[SanLiuLingStoreDevAccount]='{2}',[SanLiuLingStoreDevPassword]='{3}',[XiaomiStoreDevAccount]='{4}',[XiaomiStoreDevPassword]='{5}'",
                        "pushGameInfoModel_t.BaiduStoreDevAccount", "pushGameInfoModel_t.BaiduStoreDevPassword",
                        "pushGameInfoModel_t.SanLiuLingStoreDevAccount", "pushGameInfoModel_t.SanLiuLingStoreDevPassword",

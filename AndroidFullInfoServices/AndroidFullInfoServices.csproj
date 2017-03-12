@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DevicesInfo.aspx" />
+    <Content Include="iosLanguage.txt" />
     <Content Include="iosUA.txt" />
     <Content Include="Scripts\jquery-1.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />

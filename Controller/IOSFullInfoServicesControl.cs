@@ -310,8 +310,8 @@ namespace Controller
                 SecondAnswer = infoTable.Rows[0]["SecondAnswer"].ToString(),
                 ThirdQuestion = infoTable.Rows[0]["ThirdQuestion"].ToString(),
                 ThirdAnswer = infoTable.Rows[0]["ThirdAnswer"].ToString(),
-                FirstName = CharsHelper.ConvertToPinYin(infoTable.Rows[0]["FirstName"].ToString()),
-                SecondName = CharsHelper.ConvertToPinYin(infoTable.Rows[0]["SecondName"].ToString()),
+                //FirstName = CharsHelper.ConvertToPinYin(infoTable.Rows[0]["FirstName"].ToString()),
+                //SecondName = CharsHelper.ConvertToPinYin(infoTable.Rows[0]["SecondName"].ToString()),
                 Birthday = infoTable.Rows[0]["Birthday"].ToString(),
                 Country = infoTable.Rows[0]["Country"].ToString(),
                 ApplePersonInfoID = personInfo.ID,
@@ -320,7 +320,9 @@ namespace Controller
                 PhoneNumber1 = personInfo.PhoneNumber1,
                 PhoneNumber2 = personInfo.PhoneNumber2,
                 Province = personInfo.Province,
-                ZipCode = personInfo.ZipCode
+                ZipCode = personInfo.ZipCode,
+                FirstName = personInfo.FirstName,
+                SecondName = personInfo.SecondName,
             };
 
             sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [ChangeCountryState] = '{0}' WHERE [ID] = {1}",
@@ -335,8 +337,32 @@ namespace Controller
         {
             try
             {
-                string sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [Country] = '{0}',[ChangeCountryState] = '{1}',[ApplePersonInfoID] = '{2}'  WHERE [ID] = '{3}'",
-                                                country, changeCountryState, applePersonInfoID, id);
+                string sqlCmd_GetPerson = string.Format("SELECT * from [dbo].[ApplePersonInfo] WHERE [ID] = {0}", applePersonInfoID);
+
+                DataTable infoTable_Persion = SqlHelper.Instance.ExecuteDataTable(sqlCmd_GetPerson);
+
+                if (infoTable_Persion == null || infoTable_Persion.Rows.Count == 0)
+                {
+                    throw new Exception("没查询到人物信息");
+                }
+
+                ApplePersonInfo t = new ApplePersonInfo
+                {
+                    ID = infoTable_Persion.Rows[0][0].ToString(),
+                    FirstName = country.ToLower() == "china" ? infoTable_Persion.Rows[0]["FirstName"].ToString() : CharsHelper.ConvertToPinYin(infoTable_Persion.Rows[0]["FirstName"].ToString()),
+                    SecondName = country.ToLower() == "china" ? infoTable_Persion.Rows[0]["SecondName"].ToString() : CharsHelper.ConvertToPinYin(infoTable_Persion.Rows[0]["SecondName"].ToString()),
+                    Address = infoTable_Persion.Rows[0]["Address"].ToString(),
+                    City = infoTable_Persion.Rows[0]["City"].ToString(),
+                    Province = infoTable_Persion.Rows[0]["Province"].ToString(),
+                    ZipCode = infoTable_Persion.Rows[0]["ZipCode"].ToString(),
+                    PhoneNumber1 = infoTable_Persion.Rows[0]["PhoneNumber1"].ToString(),
+                    PhoneNumber2 = infoTable_Persion.Rows[0]["PhoneNumber2"].ToString(),
+                    Country = infoTable_Persion.Rows[0]["Country"].ToString(),
+                };
+
+                string sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [Country] = '{0}',[ChangeCountryState] = '{1}',[ApplePersonInfoID] = '{2}',[FirstName] = '{3}',[SecondName] = '{4}'  WHERE [ID] = '{5}'",
+                                                country, changeCountryState, applePersonInfoID,
+                                                t.FirstName, t.SecondName, id);
 
                 if (string.IsNullOrEmpty(applePersonInfoID) || applePersonInfoID.ToLower() == "null" || applePersonInfoID.ToLower() == "-1")
                 {

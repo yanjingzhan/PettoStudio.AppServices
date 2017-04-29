@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AccountInfo.aspx" />
+    <Content Include="Helper.aspx" />
     <Content Include="IAPServices.aspx" />
     <Content Include="Scripts\jquery-1.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
@@ -67,6 +68,13 @@
     </Compile>
     <Compile Include="AccountInfo.aspx.designer.cs">
       <DependentUpon>AccountInfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Helper.aspx.cs">
+      <DependentUpon>Helper.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Helper.aspx.designer.cs">
+      <DependentUpon>Helper.aspx</DependentUpon>
     </Compile>
     <Compile Include="IAPServices.aspx.cs">
       <DependentUpon>IAPServices.aspx</DependentUpon>

@@ -59,9 +59,14 @@ namespace Controller
             return t;
         }
 
-        public AppleAccountFullInfo GetAppleAccountFullInfoByState(string state)
+        public AppleAccountFullInfo GetAppleAccountFullInfoByState(string state,string country="")
         {
             string sqlCmd = string.Format("select TOP 1 * from [dbo].[AppleAccountFullInfo] a,[dbo].[ApplePersonInfo] b where  a.[State]='{0}' AND a.[ApplePersonInfoID]=b.[ID] order by a.[GetTime], a.[UpdateTime] DESC", state);
+            if(!string.IsNullOrEmpty(country))
+            {
+                sqlCmd = string.Format("select TOP 1 * from [dbo].[AppleAccountFullInfo] a,[dbo].[ApplePersonInfo] b where  a.[State]='{0}' AND a.[Country]='{1}' AND a.[ApplePersonInfoID]=b.[ID] order by a.[GetTime], a.[UpdateTime] DESC",
+                    state, country);
+            }
 
             DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
 

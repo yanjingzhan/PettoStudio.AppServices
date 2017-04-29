@@ -18,7 +18,7 @@ namespace IOSFullInfoServices
         {
             if (!IsPostBack)
             {
-                string action, state, account, newstate, jsonstr, id, country, newcountry,applepersoninfoid,
+                string action, state, account, newstate, jsonstr, id, country, newcountry, applepersoninfoid,
                     oldchangecountrystate, newchangecountrystate, oldshuavunglestate, newshuavunglestate, changecountrystate, shuavunglestate;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
@@ -82,7 +82,7 @@ namespace IOSFullInfoServices
                         break;
 
                     case "updatecountryandchangecountrystatebyid":
-                        UpdateCountryAndChangeCountryStateByID(country, changecountrystate, applepersoninfoid,id);
+                        UpdateCountryAndChangeCountryStateByID(country, changecountrystate, applepersoninfoid, id);
                         break;
 
                     case "getappaccountbycountryandshuavunglestate":
@@ -174,11 +174,10 @@ namespace IOSFullInfoServices
         {
             try
             {
-                var data = new IOSFullInfoServicesControl().GetAppleAccountFullInfoByState(state);
-
                 string keyWords = string.Empty;
                 string logoFileName = string.Empty;
                 string gamecount = string.Empty;
+                string country = string.Empty;
 
                 using (StreamReader sr = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "shuagame.txt"))
                 {
@@ -205,9 +204,83 @@ namespace IOSFullInfoServices
                                 gamecount = line.Replace("gamecount=", "").Trim();
                                 continue;
                             }
+
+                            if (line.StartsWith("country="))
+                            {
+                                gamecount = line.Replace("country=", "").Trim();
+                                continue;
+                            }
                         }
                     }
                 }
+
+                var data = new IOSFullInfoServicesControl().GetAppleAccountFullInfoByState(state);
+
+                string result = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20}",
+                    //0~10
+                    data.AppleAccount, data.ApplePassword, gamecount, data.FirstName, data.SecondName, data.Address, data.City, data.Province, data.ZipCode, data.PhoneNumber1, data.PhoneNumber2,
+                    //11
+                    keyWords,
+                    //12
+                    GetLogoUrls(logoFileName),
+                    data.FirstQuestion, data.FirstAnswer, data.SecondQuestion, data.SecondAnswer, data.ThirdQuestion, data.ThirdAnswer, data.VerifyMail, data.VerifyPassword
+                    );
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetIOSFullInfoByStateStr");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetIOSFullInfoByStateStr");
+            }
+        }
+
+        public void GetIOSFul(string state)
+        {
+            try
+            {
+                string keyWords = string.Empty;
+                string logoFileName = string.Empty;
+                string gamecount = string.Empty;
+                string country = string.Empty;
+
+                using (StreamReader sr = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "shuagame.txt"))
+                {
+                    string line = string.Empty;
+
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (!line.StartsWith(";") && !line.StartsWith("#"))
+                        {
+                            if (line.StartsWith("keywords="))
+                            {
+                                keyWords = line.Replace("keywords=", "").Trim();
+                                continue;
+                            }
+
+                            if (line.StartsWith("gamelogo="))
+                            {
+                                logoFileName = line.Replace("gamelogo=", "").Trim();
+                                continue;
+                            }
+
+                            if (line.StartsWith("gamecount="))
+                            {
+                                gamecount = line.Replace("gamecount=", "").Trim();
+                                continue;
+                            }
+
+                            if (line.StartsWith("country="))
+                            {
+                                gamecount = line.Replace("country=", "").Trim();
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+                var data = new IOSFullInfoServicesControl().GetAppleAccountFullInfoByState(state);
 
                 string result = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20}",
                     //0~10

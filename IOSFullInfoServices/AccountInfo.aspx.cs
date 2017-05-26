@@ -18,7 +18,7 @@ namespace IOSFullInfoServices
         {
             if (!IsPostBack)
             {
-                string action, state, account, newstate, jsonstr, id, country, newcountry, applepersoninfoid,
+                string action, state, account, newstate, jsonstr, id, country, newcountry, applepersoninfoid, configfilename,
                     oldchangecountrystate, newchangecountrystate, oldshuavunglestate, newshuavunglestate, changecountrystate, shuavunglestate;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
@@ -38,6 +38,7 @@ namespace IOSFullInfoServices
                 shuavunglestate = Request["shuavunglestate"] == null ? "" : Request["shuavunglestate"].Trim();
                 newcountry = Request["newcountry"] == null ? "" : Request["newcountry"].Trim();
                 applepersoninfoid = Request["applepersoninfoid"] == null ? "" : Request["applepersoninfoid"].Trim();
+                configfilename = Request["configfilename"] == null ? "" : Request["configfilename"].Trim();
 
                 switch (action.ToLower())
                 {
@@ -54,7 +55,7 @@ namespace IOSFullInfoServices
                         break;
 
                     case "getiosfullinfobystatestr":
-                        GetIOSFullInfoByStateStr(state);
+                        GetIOSFullInfoByStateStr(state, configfilename);
                         break;
 
                     case "getappleaccountfullinfoandrefreshstatebystate":
@@ -92,6 +93,11 @@ namespace IOSFullInfoServices
                     case "updateshuavunglestatebyid":
                         UpdateShuaVungleStateByID(shuavunglestate, id);
                         break;
+
+                    case "getappleaccountfullinfobystateforicloud":
+                        GetAppleAccountFullInfoByStateForiCloud(state);
+                        break;
+
                     default:
                         Response.Write("-100:action is error!");
                         break;
@@ -170,7 +176,7 @@ namespace IOSFullInfoServices
         }
 
 
-        public void GetIOSFullInfoByStateStr(string state)
+        public void GetIOSFullInfoByStateStr(string state, string configFileName = "shuagame.txt")
         {
             try
             {
@@ -178,8 +184,12 @@ namespace IOSFullInfoServices
                 string logoFileName = string.Empty;
                 string gamecount = string.Empty;
                 string country = string.Empty;
+                string bunldeNames = string.Empty;
+                string appIDs = string.Empty;
 
-                using (StreamReader sr = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "shuagame.txt"))
+                configFileName = string.IsNullOrEmpty(configFileName) ? "shuagame.txt" : configFileName;
+
+                using (StreamReader sr = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + configFileName))
                 {
                     string line = string.Empty;
 
@@ -210,20 +220,35 @@ namespace IOSFullInfoServices
                                 gamecount = line.Replace("country=", "").Trim();
                                 continue;
                             }
+
+                            if (line.StartsWith("bundlenames="))
+                            {
+                                bunldeNames = line.Replace("bundlenames=", "").Trim().Replace(",", "|");
+                                continue;
+                            }
+
+                            if (line.StartsWith("appids="))
+                            {
+                                appIDs = line.Replace("appids=", "").Trim().Trim().Replace(",", "|");
+                                continue;
+                            }
+
                         }
                     }
                 }
 
                 var data = new IOSFullInfoServicesControl().GetAppleAccountFullInfoByState(state);
 
-                string result = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20}",
+                string result = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22}",
                     //0~10
                     data.AppleAccount, data.ApplePassword, gamecount, data.FirstName, data.SecondName, data.Address, data.City, data.Province, data.ZipCode, data.PhoneNumber1, data.PhoneNumber2,
                     //11
                     keyWords,
                     //12
                     GetLogoUrls(logoFileName),
-                    data.FirstQuestion, data.FirstAnswer, data.SecondQuestion, data.SecondAnswer, data.ThirdQuestion, data.ThirdAnswer, data.VerifyMail, data.VerifyPassword
+                    data.FirstQuestion, data.FirstAnswer, data.SecondQuestion, data.SecondAnswer, data.ThirdQuestion, data.ThirdAnswer, data.VerifyMail, data.VerifyPassword,
+                    //21~22
+                    bunldeNames, appIDs
                     );
 
                 Response.Write(result);
@@ -234,6 +259,25 @@ namespace IOSFullInfoServices
                 Response.Write(ex.Message);
                 LogWriter.WriteLog(ex.Message, Page, "GetIOSFullInfoByStateStr");
             }
+        }
+
+        public void GetAppleAccountFullInfoByStateForiCloud(string state)
+        {
+            try
+            {
+                var data = new IOSFullInfoServicesControl().GetAppleAccountFullInfoByStateForiCloud(state);
+                string result = string.Format("{0},{1}",
+                        data.AppleAccount, data.ApplePassword);
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetAppleAccountFullInfoByStateForiCloud");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetAppleAccountFullInfoByStateForiCloud");
+            }
+
         }
 
         public void GetIOSBundleNames()

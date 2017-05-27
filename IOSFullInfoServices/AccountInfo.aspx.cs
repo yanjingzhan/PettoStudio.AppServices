@@ -92,6 +92,10 @@ namespace IOSFullInfoServices
                     case "updateshuavunglestatebyid":
                         UpdateShuaVungleStateByID(shuavunglestate, id);
                         break;
+
+                    case "getiosbundlenames":
+                        GetIOSBundleNames();
+                        break;
                     default:
                         Response.Write("-100:action is error!");
                         break;

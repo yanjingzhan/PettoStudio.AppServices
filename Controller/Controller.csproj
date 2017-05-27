@@ -44,6 +44,7 @@
     <Compile Include="AndroidFullInfoServicesControl.cs" />
     <Compile Include="AndroidPushGameInfoControl.cs" />
     <Compile Include="DreamSparkerControl.cs" />
+    <Compile Include="HelperControl.cs" />
     <Compile Include="IOSFullInfoServicesControl.cs" />
     <Compile Include="IOSIAPServicesControl.cs" />
     <Compile Include="PlayControl.cs" />

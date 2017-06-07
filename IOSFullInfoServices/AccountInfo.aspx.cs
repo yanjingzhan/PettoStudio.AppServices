@@ -46,6 +46,10 @@ namespace IOSFullInfoServices
                         GetIOSFullInfo();
                         break;
 
+                    case "currenttime":
+                        CurrentTime();
+                        break;
+
                     case "getiosfullinfostr":
                         GetIOSFullInfoStr();
                         break;
@@ -98,11 +102,20 @@ namespace IOSFullInfoServices
                         GetAppleAccountFullInfoByStateForiCloud(state);
                         break;
 
+                    case "getiosbundlenames":
+                        GetIOSBundleNames();
+                        break;
+
                     default:
                         Response.Write("-100:action is error!");
                         break;
                 }
             }
+        }
+
+        public void CurrentTime()
+        {
+            Response.Write(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         }
 
         public void GetIOSFullInfo()

@@ -163,6 +163,68 @@ namespace Controller
             return t;
         }
 
+        public ASOTask GetASOTaskForPhone(string state, string phonegroup)
+        {
+            string sqlCmd = string.Format("SELECT TOP 1 * FROM [dbo].[ASOTasks] WHERE [State]='normal' AND [SuccessAccounts] < [MaxAccounts] AND [PhoneGroup]='{0}' ORDER BY [TaskLevel] DESC,[ID]",phonegroup);
+            
+            DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+            if (infoTable == null || infoTable.Rows.Count == 0)
+            {
+                throw new Exception("无数据");
+            }
+
+            ASOTask t = new ASOTask
+            {
+                ID = infoTable.Rows[0]["ID"].ToString(),
+
+                AppName = infoTable.Rows[0]["AppName"].ToString(),
+                AppBundleID = infoTable.Rows[0]["AppBundleID"].ToString(),
+                Keyword = infoTable.Rows[0]["Keyword"].ToString(),
+                Country = infoTable.Rows[0]["Country"].ToString(),
+                MaxAccounts = infoTable.Rows[0]["MaxAccounts"].ToString(),
+                UsedAccounts = infoTable.Rows[0]["UsedAccounts"].ToString(),
+                SuccessAccounts = infoTable.Rows[0]["SuccessAccounts"].ToString(),
+                StartTime = infoTable.Rows[0]["StartTime"].ToString(),
+                EndTime = infoTable.Rows[0]["EndTime"].ToString(),
+                State = infoTable.Rows[0]["State"].ToString(),
+                GameLogo = infoTable.Rows[0]["GameLogo"].ToString(),
+                TaskLevel = infoTable.Rows[0]["TaskLevel"].ToString(),
+                AppID = infoTable.Rows[0]["AppID"].ToString(),
+            };
+
+            sqlCmd = string.Format("SELECT TOP 1 * FROM [dbo].[AppleAccountFullInfo] WHERE [State]='{0}' AND [Country]='{1}' ORDER BY [GetTime], [UpdateTime] DESC",state,t.Country);
+
+            DataTable infoTable2 = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+            if (infoTable2 == null || infoTable2.Rows.Count == 0)
+            {
+                throw new Exception("无数据");
+            }
+
+            t.Account = infoTable2.Rows[0]["AppleAccount"].ToString();
+            t.Password = infoTable2.Rows[0]["ApplePassword"].ToString();
+
+            sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [State] = '{0}',[UpdateTime] = '{1}',[GetTime] = '{2}' WHERE [ID] = {3}",
+                               state, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), infoTable2.Rows[0]["ID"].ToString());
+
+            SqlHelper.Instance.ExecuteCommand(sqlCmd);
+
+            sqlCmd = string.Format("UPDATE [dbo].[ASOTasks] SET [UsedAccounts] = [UsedAccounts] + 1,[EndTime] = '{0}' WHERE [ID] = {1}",
+                DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), t.ID);
+
+            SqlHelper.Instance.ExecuteCommand(sqlCmd);
+
+            return t;
+        }
+
+        public void ASOSuccess(string taskID)
+        {
+            string sqlCmd = string.Format("UPDATE [dbo].[ASOTasks] SET [SuccessAccounts] = [SuccessAccounts] + 1,[EndTime] = '{0}' WHERE [ID] = {1}",
+                DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), taskID);
+
+            SqlHelper.Instance.ExecuteCommand(sqlCmd);
+        }
 
         public AppleAccountFullInfo GetAppleAccountFullInfoAndRefreshStateByState(string state, string newState)
         {

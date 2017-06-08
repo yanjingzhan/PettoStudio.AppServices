@@ -18,8 +18,8 @@ namespace IOSFullInfoServices
         {
             if (!IsPostBack)
             {
-                string action, state, account, newstate, jsonstr, id, country, newcountry, applepersoninfoid, configfilename,
-                    oldchangecountrystate, newchangecountrystate, oldshuavunglestate, newshuavunglestate, changecountrystate, shuavunglestate;
+                string action, state, account, newstate, jsonstr, id, country, newcountry, applepersoninfoid, configfilename,taskid,
+                    oldchangecountrystate, newchangecountrystate, oldshuavunglestate, newshuavunglestate, changecountrystate, shuavunglestate, phonegroup;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 state = Request["state"] == null ? "" : Request["state"].Trim();
@@ -39,6 +39,9 @@ namespace IOSFullInfoServices
                 newcountry = Request["newcountry"] == null ? "" : Request["newcountry"].Trim();
                 applepersoninfoid = Request["applepersoninfoid"] == null ? "" : Request["applepersoninfoid"].Trim();
                 configfilename = Request["configfilename"] == null ? "" : Request["configfilename"].Trim();
+
+                phonegroup = Request["phonegroup"] == null ? "" : Request["phonegroup"].Trim();
+                taskid = Request["taskid"] == null ? "" : Request["taskid"].Trim();
 
                 switch (action.ToLower())
                 {
@@ -104,6 +107,14 @@ namespace IOSFullInfoServices
 
                     case "getiosbundlenames":
                         GetIOSBundleNames();
+                        break;
+
+                    case "getasotaskforphone":
+                        GetASOTaskForPhone(state,phonegroup);
+                        break;
+
+                    case "asosuccess":
+                        ASOSuccess(taskid);
                         break;
 
                     default:
@@ -292,6 +303,39 @@ namespace IOSFullInfoServices
             }
 
         }
+
+        public void GetASOTaskForPhone(string state, string phonegroup)
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(new IOSFullInfoServicesControl().GetASOTaskForPhone(state, phonegroup));
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetASOTaskForPhone");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetASOTaskForPhone");
+            }
+        }
+
+        public void ASOSuccess(string taskID)
+        {
+            try
+            {
+                new IOSFullInfoServicesControl().ASOSuccess(taskID);
+
+                Response.Write("200:ok");
+                LogWriter.WriteLog("200:ok", Page, "ASOSuccess");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "ASOSuccess");
+            }
+        }
+
 
         public void GetIOSBundleNames()
         {

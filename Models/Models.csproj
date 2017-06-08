@@ -59,6 +59,7 @@
     <Compile Include="IOSFullInfoServices\AppleAccountFullInfo.cs" />
     <Compile Include="IOSFullInfoServices\AppleIAPRecord.cs" />
     <Compile Include="IOSFullInfoServices\ApplePersonInfo.cs" />
+    <Compile Include="IOSFullInfoServices\ASOTask.cs" />
     <Compile Include="IOSFullInfoServices\IAPRecordItemModel.cs" />
     <Compile Include="Out\AdInfo.cs" />
     <Compile Include="Out\RecommendAppModel.cs" />

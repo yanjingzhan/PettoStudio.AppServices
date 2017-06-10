@@ -18,7 +18,7 @@ namespace IOSFullInfoServices
         {
             if (!IsPostBack)
             {
-                string action, state, account, newstate, jsonstr, id, country, newcountry, applepersoninfoid, configfilename,taskid,
+                string action, state, account, newstate, jsonstr, id, country, newcountry, applepersoninfoid, configfilename,taskid,applepassword,
                     oldchangecountrystate, newchangecountrystate, oldshuavunglestate, newshuavunglestate, changecountrystate, shuavunglestate, phonegroup;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
@@ -42,6 +42,8 @@ namespace IOSFullInfoServices
 
                 phonegroup = Request["phonegroup"] == null ? "" : Request["phonegroup"].Trim();
                 taskid = Request["taskid"] == null ? "" : Request["taskid"].Trim();
+
+                applepassword = Request["applepassword"] == null ? "" : Request["applepassword"].Trim();
 
                 switch (action.ToLower())
                 {
@@ -117,6 +119,9 @@ namespace IOSFullInfoServices
                         ASOSuccess(taskid);
                         break;
 
+                    case "updatepasswordcountryandchangecountrystatebyid":
+                        UpdatePasswordCountryAndChangeCountryStateByID(country, changecountrystate, applepersoninfoid, id, applepassword);
+                        break;
                     default:
                         Response.Write("-100:action is error!");
                         break;
@@ -469,6 +474,22 @@ namespace IOSFullInfoServices
             {
                 Response.Write(ex.Message);
                 LogWriter.WriteLog(ex.Message, Page, "GetAppAccountByChangeCountryState");
+            }
+        }
+
+        public void UpdatePasswordCountryAndChangeCountryStateByID(string country, string changeCountryState, string applePersonInfoID, string id, string applePassword)
+        {
+            try
+            {
+                new IOSFullInfoServicesControl().UpdatePasswordCountryAndChangeCountryStateByID(country, changeCountryState, applePersonInfoID, id,applePassword);
+
+                Response.Write("200:ok");
+                LogWriter.WriteLog("200:ok", Page, "UpdatePasswordCountryAndChangeCountryStateByID");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "UpdatePasswordCountryAndChangeCountryStateByID");
             }
         }
 

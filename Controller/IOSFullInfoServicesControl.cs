@@ -452,7 +452,10 @@ namespace Controller
             return t;
         }
 
-        public void UpdateCountryAndChangeCountryStateByID(string country, string changeCountryState, string applePersonInfoID, string id)
+
+
+
+        public void UpdateCountryAndChangeCountryStateByID(string country, string changeCountryState, string applePersonInfoID, string id,string applePassword = "")
         {
             try
             {
@@ -489,7 +492,52 @@ namespace Controller
                                                 country, changeCountryState, id);
                 }
 
-                DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+                SqlHelper.Instance.ExecuteCommand(sqlCmd);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public void UpdatePasswordCountryAndChangeCountryStateByID(string country, string changeCountryState, string applePersonInfoID, string id, string applePassword)
+        {
+            try
+            {
+                string sqlCmd_GetPerson = string.Format("SELECT * from [dbo].[ApplePersonInfo] WHERE [ID] = {0}", applePersonInfoID);
+
+                DataTable infoTable_Persion = SqlHelper.Instance.ExecuteDataTable(sqlCmd_GetPerson);
+
+                if (infoTable_Persion == null || infoTable_Persion.Rows.Count == 0)
+                {
+                    throw new Exception("没查询到人物信息");
+                }
+
+                ApplePersonInfo t = new ApplePersonInfo
+                {
+                    ID = infoTable_Persion.Rows[0][0].ToString(),
+                    FirstName = country.ToLower() == "china" ? infoTable_Persion.Rows[0]["FirstName"].ToString() : CharsHelper.ConvertToPinYin(infoTable_Persion.Rows[0]["FirstName"].ToString()),
+                    SecondName = country.ToLower() == "china" ? infoTable_Persion.Rows[0]["SecondName"].ToString() : CharsHelper.ConvertToPinYin(infoTable_Persion.Rows[0]["SecondName"].ToString()),
+                    Address = infoTable_Persion.Rows[0]["Address"].ToString(),
+                    City = infoTable_Persion.Rows[0]["City"].ToString(),
+                    Province = infoTable_Persion.Rows[0]["Province"].ToString(),
+                    ZipCode = infoTable_Persion.Rows[0]["ZipCode"].ToString(),
+                    PhoneNumber1 = infoTable_Persion.Rows[0]["PhoneNumber1"].ToString(),
+                    PhoneNumber2 = infoTable_Persion.Rows[0]["PhoneNumber2"].ToString(),
+                    Country = infoTable_Persion.Rows[0]["Country"].ToString(),
+                };
+
+                string sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [Country] = '{0}',[ChangeCountryState] = '{1}',[ApplePersonInfoID] = '{2}',[FirstName] = '{3}',[SecondName] = '{4}',[ApplePassword] = '{5}'  WHERE [ID] = '{6}'",
+                                                country, changeCountryState, applePersonInfoID,
+                                                t.FirstName, t.SecondName, applePassword,id);
+
+                if (string.IsNullOrEmpty(applePersonInfoID) || applePersonInfoID.ToLower() == "null" || applePersonInfoID.ToLower() == "-1")
+                {
+                    sqlCmd = string.Format("UPDATE [dbo].[AppleAccountFullInfo] SET [Country] = '{0}',[ChangeCountryState] = '{1}',[ApplePassword] = '{2}'  WHERE [ID] = '{3}'",
+                                                country, changeCountryState,applePassword, id);
+                }
 
                 SqlHelper.Instance.ExecuteCommand(sqlCmd);
 

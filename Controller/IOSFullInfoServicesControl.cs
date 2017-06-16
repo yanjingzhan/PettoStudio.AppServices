@@ -174,7 +174,7 @@ namespace Controller
                 throw new Exception("无数据");
             }
 
-            ASOTask t = new ASOTask
+            ASOTask t = new ASOTask 
             {
                 ID = infoTable.Rows[0]["ID"].ToString(),
 

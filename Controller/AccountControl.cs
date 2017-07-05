@@ -866,6 +866,55 @@ namespace Controller
             }
         }
 
+        /// <summary>
+        /// 获取工作统计
+        /// </summary>
+        /// <param name="type">day--当天，month--当月</param>
+        public List<WorkStatisticsModel> GetWorkStatisticsShuaWP(string type)
+        {
+            try
+            {
+                string sqlCmd = string.Format("SELECT [ShuaCount],[Person] FROM [dbo].[PersonShuaCount] WHERE [Day] like ('%' + CONVERT(varchar(100), GETDATE(), 23) + '%') AND [Person] != '' ORDER BY [ShuaCount] DESC");
+
+                if (type.ToLower().Trim() == "month")
+                {
+                    sqlCmd = string.Format("SELECT Sum(convert(int,[ShuaCount])) as [Sum] ,[Person] FROM [dbo].[PersonShuaCount] WHERE [Day] like ('%' + LEFT(CONVERT(varchar(100), GETDATE(), 23),7) + '%') AND [Person] != '' GROUP BY [Person] ORDER BY [Sum] DESC");
+                }
+
+                DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (infoTable == null || infoTable.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+                List<WorkStatisticsModel> result = new List<WorkStatisticsModel>();
+
+                int index = 1;
+                for (int i = 0; i < infoTable.Rows.Count; i++)
+                {
+                    if (!infoTable.Rows[i]["Person"].ToString().Contains("熊凯") && !infoTable.Rows[i]["Person"].ToString().Contains("黄燕"))
+                    {
+                        WorkStatisticsModel t = new WorkStatisticsModel
+                        {
+                            Index = index ++ ,
+                            Person = infoTable.Rows[i]["Person"].ToString(),
+                            ShuaCount = type.ToLower().Trim() == "month" ? infoTable.Rows[i]["Sum"].ToString() : infoTable.Rows[i]["ShuaCount"].ToString()
+                        };
+
+                        result.Add(t);
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
+                throw ex;
+            }
+        }
+
         #region 账号归组
 
         public List<string> GetCountryList()

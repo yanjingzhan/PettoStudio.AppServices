@@ -67,6 +67,7 @@
     <Compile Include="RecommendGames\GameModel.cs" />
     <Compile Include="RecommendGames\NewsInfoForJson.cs" />
     <Compile Include="ShuaRecord\ShuaRecordModel.cs" />
+    <Compile Include="AccountServices\WorkStatisticsModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

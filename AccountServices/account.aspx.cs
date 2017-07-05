@@ -17,7 +17,7 @@ namespace AccountServices
         {
             if (!IsPostBack)
             {
-                string action, account, password, username, country, group, state, phonetype, accountcount, addTime, count, newstate, person, computername, iosstate, newiosstate;
+                string action, account, password, username, country, group, state, phonetype, accountcount, addTime, count, newstate, person, computername, iosstate, newiosstate, type;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 account = Request["account"] == null ? "" : Request["account"].Trim();
@@ -35,6 +35,7 @@ namespace AccountServices
                 computername = Request["computername"] == null ? "" : Request["computername"].Trim();
                 iosstate = Request["iosstate"] == null ? "" : Request["iosstate"].Trim();
                 newiosstate = Request["newiosstate"] == null ? "" : Request["newiosstate"].Trim();
+                type = Request["type"] == null ? "" : Request["type"].Trim();
 
 
                 switch (action.ToLower())
@@ -114,10 +115,32 @@ namespace AccountServices
                         UpdateIOSStateByAccount(account, iosstate);
                         break;
 
+                    case "getworkstatisticsshuawp":
+                        GetWorkStatisticsShuaWP(type);
+                        break;
+
                     default:
                         Response.Write("-100:action is error!");
                         break;
                 }
+            }
+        }
+
+
+        private void GetWorkStatisticsShuaWP(string type)
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(
+                    new AccountControl().GetWorkStatisticsShuaWP(type));
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetWorkStatisticsShuaWP");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetWorkStatisticsShuaWP");
             }
         }
 

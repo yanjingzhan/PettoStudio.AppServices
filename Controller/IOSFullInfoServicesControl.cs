@@ -191,6 +191,7 @@ namespace Controller
                 GameLogo = infoTable.Rows[0]["GameLogo"].ToString(),
                 TaskLevel = infoTable.Rows[0]["TaskLevel"].ToString(),
                 AppID = infoTable.Rows[0]["AppID"].ToString(),
+                UseVPN = infoTable.Rows[0]["UseVPN"].ToString(),
             };
 
             sqlCmd = string.Format("SELECT TOP 1 * FROM [dbo].[AppleAccountFullInfo] WHERE [State]='{0}' AND [Country]='{1}' ORDER BY [GetTime], [UpdateTime] DESC",state,t.Country);
@@ -452,9 +453,7 @@ namespace Controller
             return t;
         }
 
-
-
-
+        
         public void UpdateCountryAndChangeCountryStateByID(string country, string changeCountryState, string applePersonInfoID, string id,string applePassword = "")
         {
             try

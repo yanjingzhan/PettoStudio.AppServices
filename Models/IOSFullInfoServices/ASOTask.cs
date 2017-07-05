@@ -24,5 +24,7 @@ namespace Models.IOSFullInfoServices
         public string GameLogo;
         public string TaskLevel;
         public string AppID;
+
+        public string UseVPN;
     }
 }

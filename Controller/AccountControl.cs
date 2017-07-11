@@ -897,7 +897,7 @@ namespace Controller
                     {
                         WorkStatisticsModel t = new WorkStatisticsModel
                         {
-                            Index = index ++ ,
+                            Index = index++,
                             Person = infoTable.Rows[i]["Person"].ToString(),
                             ShuaCount = type.ToLower().Trim() == "month" ? infoTable.Rows[i]["Sum"].ToString() : infoTable.Rows[i]["ShuaCount"].ToString()
                         };
@@ -910,6 +910,84 @@ namespace Controller
             }
             catch (Exception ex)
             {
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
+                throw ex;
+            }
+        }
+
+        public ShuaUWPModel GetShuaUWPInfo()
+        {
+            try
+            {
+                ShuaUWPModel result = new ShuaUWPModel();
+
+                string sqlCmd = string.Format("SELECT TOP 1 * FROM [dbo].[Accounts] WHERE [UWPState] is null ORDER BY [AddTime] DESC,[UpdateTime] DESC");
+
+
+                DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (infoTable == null || infoTable.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+
+                result.account = infoTable.Rows[0]["Account"].ToString();
+                result.password = infoTable.Rows[0]["Password"].ToString();
+
+                sqlCmd = string.Format("SELECT * FROM [dbo].[UWP] WHERE [State] = 'normal'");
+
+
+                DataTable infoTable2 = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (infoTable2 == null || infoTable2.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+                result.UWPInfoList = new List<UWP>();
+
+                for (int i = 0; i < infoTable2.Rows.Count; i++)
+                {
+                    UWP t = new UWP
+                    {
+                        AppID = infoTable2.Rows[0]["AppID"].ToString().Trim(),
+                        ProtocolLink = infoTable2.Rows[0]["ProtocolLink"].ToString().Trim(),
+                    };
+
+                    result.UWPInfoList.Add(t);
+                }
+
+                sqlCmd = string.Format("UPDATE [dbo].[Accounts] SET [UWPState] = 'shuade' WHERE [Account] = '{0}'", result.account);
+                SqlHelper.Instance.ExecuteCommand(sqlCmd);
+
+
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
+                throw ex;
+            }
+        }
+
+        public void UpdateUWPShuaCount(string appid,string issuc)
+        {
+            try
+            {
+                string sqlCmd = string.Format("UPDATE [dbo].[UWP] SET [SucCount] = [SucCount] + 1,[UpdateTime] = GETDATE() WHERE [AppID] = '{0}'", appid);
+                if(issuc.ToLower() != "true")
+                {
+                    sqlCmd = string.Format("UPDATE [dbo].[UWP] SET [FailCount] = [FailCount] + 1,[UpdateTime] = GETDATE() WHERE [AppID] = '{0}'", appid);
+                }
+
+                SqlHelper.Instance.ExecuteCommand(sqlCmd);
+            }
+            catch (Exception ex)
+            {
+
                 Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
                 throw ex;
             }

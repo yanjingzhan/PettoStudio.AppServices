@@ -17,7 +17,8 @@ namespace AccountServices
         {
             if (!IsPostBack)
             {
-                string action, account, password, username, country, group, state, phonetype, accountcount, addTime, count, newstate, person, computername, iosstate, newiosstate, type;
+                string action, account, password, username, country, group, state, phonetype, issuc,appid,
+                    accountcount, addTime, count, newstate, person, computername, iosstate, newiosstate, type;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 account = Request["account"] == null ? "" : Request["account"].Trim();
@@ -36,6 +37,8 @@ namespace AccountServices
                 iosstate = Request["iosstate"] == null ? "" : Request["iosstate"].Trim();
                 newiosstate = Request["newiosstate"] == null ? "" : Request["newiosstate"].Trim();
                 type = Request["type"] == null ? "" : Request["type"].Trim();
+                issuc = Request["issuc"] == null ? "" : Request["issuc"].Trim();
+                appid = Request["appid"] == null ? "" : Request["appid"].Trim();
 
 
                 switch (action.ToLower())
@@ -119,6 +122,14 @@ namespace AccountServices
                         GetWorkStatisticsShuaWP(type);
                         break;
 
+                    case "getshuauwpinfo":
+                        GetShuaUWPInfo();
+                        break;
+
+                    case "updateuwpshuacount":
+                        UpdateUWPShuaCount(appid, issuc);
+                        break;
+
                     default:
                         Response.Write("-100:action is error!");
                         break;
@@ -126,6 +137,39 @@ namespace AccountServices
             }
         }
 
+
+        private void UpdateUWPShuaCount(string appid, string issuc)
+        {
+            try
+            {
+                new AccountControl().UpdateUWPShuaCount(appid, issuc);
+
+                Response.Write("200:ok");
+                LogWriter.WriteLog("200:ok", Page, "UpdateUWPShuaCount");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "UpdateUWPShuaCount");
+            }
+        }
+
+        private void GetShuaUWPInfo()
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(
+                    new AccountControl().GetShuaUWPInfo());
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetShuaUWPInfo");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetShuaUWPInfo");
+            }
+        }
 
         private void GetWorkStatisticsShuaWP(string type)
         {

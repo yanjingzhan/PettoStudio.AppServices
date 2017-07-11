@@ -41,6 +41,7 @@
     <Compile Include="AccountServices\AccountInfo.cs" />
     <Compile Include="AccountServices\AppModel.cs" />
     <Compile Include="AccountServices\CountryGroupInfo.cs" />
+    <Compile Include="AccountServices\ShuaUWPModel.cs" />
     <Compile Include="AmazonFullInfoServices\AmazonFullInfoServicesModel.cs" />
     <Compile Include="AndroidFullInfoServices\AndroidInfo.cs" />
     <Compile Include="DreamSparkerModel.cs" />

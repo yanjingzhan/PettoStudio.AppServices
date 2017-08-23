@@ -921,7 +921,7 @@ namespace Controller
             {
                 ShuaUWPModel result = new ShuaUWPModel();
 
-                string sqlCmd = string.Format("SELECT TOP 1 * FROM [dbo].[Accounts] WHERE [UWPState] is null ORDER BY [AddTime] DESC,[UpdateTime] DESC");
+                string sqlCmd = string.Format("SELECT TOP 1 * FROM [dbo].[Accounts] WHERE [UWPState] is null AND [State]='binding' ORDER BY [AddTime] DESC,[UpdateTime] DESC");
 
 
                 DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
@@ -951,8 +951,10 @@ namespace Controller
                 {
                     UWP t = new UWP
                     {
-                        AppID = infoTable2.Rows[0]["AppID"].ToString().Trim(),
-                        ProtocolLink = infoTable2.Rows[0]["ProtocolLink"].ToString().Trim(),
+                        AppID = infoTable2.Rows[i]["AppID"].ToString().Trim(),
+                        ProtocolLink = infoTable2.Rows[i]["ProtocolLink"].ToString().Trim(),
+                        Country = infoTable2.Rows[i]["Country"].ToString().Trim(),
+                        
                     };
 
                     result.UWPInfoList.Add(t);
@@ -981,6 +983,70 @@ namespace Controller
                 if(issuc.ToLower() != "true")
                 {
                     sqlCmd = string.Format("UPDATE [dbo].[UWP] SET [FailCount] = [FailCount] + 1,[UpdateTime] = GETDATE() WHERE [AppID] = '{0}'", appid);
+                }
+
+                SqlHelper.Instance.ExecuteCommand(sqlCmd);
+            }
+            catch (Exception ex)
+            {
+
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
+                throw ex;
+            }
+        }
+
+        public ComputerInfo GetIPInfo(string computernumber)
+        {
+            try
+            {
+                ComputerInfo result = new ComputerInfo();
+
+                string sqlCmd = string.Format("SELECT TOP 1 * FROM [dbo].[Computer] WHERE [ComputerNumber] = '{0}'",computernumber);
+
+
+                DataTable infoTable = SqlHelper.Instance.ExecuteDataTable(sqlCmd);
+
+                if (infoTable == null || infoTable.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+
+                for (int i = 0; i < infoTable.Rows.Count; i++)
+                {
+                    result = new ComputerInfo
+                    {
+                        ComputerNumber = infoTable.Rows[0]["ComputerNumber"].ToString().Trim(),
+                        IP = infoTable.Rows[0]["IP"].ToString().Trim(),
+
+                    };                    
+                }
+
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+
+                Log.Write(ex.Message, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log"), "DataBase");
+                throw ex;
+            }
+        }
+
+        public void UpdateIpInfo(string computernumber,string ip)
+        {
+            try
+            {
+                string sqlCmd = string.Format("SELECT [ID] FROM [dbo].[Computer] WHERE [ComputerNumber] = '{0}'", computernumber);
+
+                object t = SqlHelper.Instance.ExecuteScalar(sqlCmd);
+                if (t != null && t.ToString().ToLower() != "null")
+                {
+                    sqlCmd = string.Format("UPDATE [dbo].[Computer] SET [IP]='{0}' WHERE [ComputerNumber] = '{1}'", ip, computernumber);
+                }
+                else
+                {
+                    sqlCmd = string.Format("INSERT INTO [dbo].[Computer] ([ComputerNumber],[IP],[State],[AddTime],[UpdateTime]) VALUES ('{0}','{1}','normal',GETDATE(),GETDATE())", computernumber, ip);
                 }
 
                 SqlHelper.Instance.ExecuteCommand(sqlCmd);

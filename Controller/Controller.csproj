@@ -53,6 +53,7 @@
     <Compile Include="RecommendAppControl.cs" />
     <Compile Include="RecommendGamesControl.cs" />
     <Compile Include="ShuaControl.cs" />
+    <Compile Include="UAHelper.cs" />
     <Compile Include="UnityGameControl.cs" />
     <Compile Include="VerifyEmailControl.cs" />
   </ItemGroup>

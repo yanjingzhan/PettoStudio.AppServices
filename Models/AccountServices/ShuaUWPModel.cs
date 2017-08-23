@@ -17,5 +17,6 @@ namespace Models.AccountServices
     {
         public string AppID;
         public string ProtocolLink;
+        public string Country;
     }
 }

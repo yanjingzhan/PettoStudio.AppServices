@@ -17,7 +17,7 @@ namespace AccountServices
         {
             if (!IsPostBack)
             {
-                string action, account, password, username, country, group, state, phonetype, issuc,appid,
+                string action, account, password, username, country,ip, group, state, phonetype, issuc, appid, computernumber,
                     accountcount, addTime, count, newstate, person, computername, iosstate, newiosstate, type;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
@@ -39,6 +39,8 @@ namespace AccountServices
                 type = Request["type"] == null ? "" : Request["type"].Trim();
                 issuc = Request["issuc"] == null ? "" : Request["issuc"].Trim();
                 appid = Request["appid"] == null ? "" : Request["appid"].Trim();
+                computernumber = Request["computernumber"] == null ? "" : Request["computernumber"].Trim();
+                ip = Request["ip"] == null ? "" : Request["ip"].Trim();
 
 
                 switch (action.ToLower())
@@ -129,6 +131,14 @@ namespace AccountServices
                     case "updateuwpshuacount":
                         UpdateUWPShuaCount(appid, issuc);
                         break;
+                        
+                    case "getipinfo":
+                        GetIPInfo(computernumber);
+                        break;
+
+                    case "updateipinfo":
+                        UpdateIpInfo(computernumber,ip);
+                        break;
 
                     default:
                         Response.Write("-100:action is error!");
@@ -137,6 +147,38 @@ namespace AccountServices
             }
         }
 
+        public void UpdateIpInfo(string computernumber,string ip)
+        {
+            try
+            {
+                new AccountControl().UpdateIpInfo(computernumber, ip);
+
+                Response.Write("200:ok");
+                LogWriter.WriteLog("200:ok", Page, "UpdateIpInfo");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "UpdateIpInfo");
+            }
+        }
+
+        public void GetIPInfo(string computernumber)
+        {
+            try
+            {
+                string result = JsonHelper.SerializerToJson(
+                    new AccountControl().GetIPInfo(computernumber));
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetIPInfo");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetIPInfo");
+            }
+        }
 
         private void UpdateUWPShuaCount(string appid, string issuc)
         {

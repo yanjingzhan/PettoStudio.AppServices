@@ -17,13 +17,14 @@ namespace AndroidFullInfoServices
         {
             if (!IsPostBack)
             {
-                string action, networkOperator, language, timeZone,log;
+                string action, networkOperator, language, timeZone, log, system;
 
                 action = Request["action"] == null ? "" : Request["action"].Trim();
                 networkOperator = Request["networkoperator"] == null ? "" : Request["networkoperator"].Trim();
                 language = Request["language"] == null ? "" : Request["language"].Trim();
                 timeZone = Request["timezone"] == null ? "" : Request["timezone"].Trim();
                 log = Request["log"] == null ? "" : Request["log"].Trim();
+                system = Request["system"] == null ? "" : Request["system"].Trim();
 
                 switch (action.ToLower())
                 {
@@ -38,13 +39,33 @@ namespace AndroidFullInfoServices
                     case "reportlog":
                         ReportLog(log);
                         break;
+                        
+                    case "getuarandom":
+                        GetUARandom(system);
+                        break;
 
                     default:
                         Response.Write("-100:action is error!");
                         break;
                 }
             }
-        }   
+        }
+
+        private void GetUARandom(string system)
+        {
+            try
+            {
+                string result = new UAHelper().GetUARandom(system);
+
+                Response.Write(result);
+                LogWriter.WriteLog(result, Page, "GetUARandom");
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+                LogWriter.WriteLog(ex.Message, Page, "GetUARandom");
+            }
+        }
 
         private void ReportLog(string log)
         {
